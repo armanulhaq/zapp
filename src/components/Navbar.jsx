@@ -87,7 +87,7 @@ export const Navbar = () => {
                     </button>
                 </div>
                 {!user ? (
-                    <button className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white font-md text-sm rounded-xl">
+                    <button className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white font-md text-sm rounded-lg font-bold">
                         Login
                     </button>
                 ) : (
@@ -102,7 +102,7 @@ export const Navbar = () => {
                             </li>
                             <li
                                 onClick={logout}
-                                className="p-1.5 pl-3 hover-bg-primary/10 cursor-pointer"
+                                className="p-1.5 pl-3 hover-bg-primary/10 cursor-pointer font-bold"
                             >
                                 Logout
                             </li>
@@ -186,14 +186,14 @@ export const Navbar = () => {
                             setOpen(false);
                             setShowUserLogin(true);
                         }}
-                        className="cursor-pointer px-6 py-2 mt-2 bg-primary  hover:bg-primary-dull transition text-white rounded-xl text-sm"
+                        className="cursor-pointer px-6 py-2 mt-2 bg-primary  hover:bg-primary-dull transition text-white rounded-lg text-sm"
                     >
                         Login
                     </button>
                 ) : (
                     <button
                         onClick={logout}
-                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-dull transition text-white rounded-xl text-sm"
+                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-dull transition text-white rounded-lg text-sm"
                     >
                         Logout
                     </button>
