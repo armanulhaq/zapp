@@ -33,9 +33,9 @@ export const Navbar = () => {
                 <NavLink to="/products">All Products</NavLink>
                 <NavLink to="/contact">Contact</NavLink>
 
-                <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-100  bg-gray-50 pr-5 rounded-xl">
+                <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-100  bg-[#fff6cc] pr-5 rounded-xl">
                     <input
-                        className="px-5 py-3 w-full outline-none placeholder-gray-300 rounded-xl"
+                        className="px-5 py-3 w-full outline-none placeholder-gray-400 rounded-xl"
                         type="text"
                         placeholder="Search products"
                     />
