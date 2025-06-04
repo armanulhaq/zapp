@@ -22,8 +22,8 @@ import black_arrow_icon from "./black_arrow_icon.svg";
 import white_arrow_icon from "./white_arrow_icon.svg";
 import main_banner_bg from "./main_banner_bg.jpg";
 import main_banner_bg_sm from "./main_banner_bg_sm.jpg";
-import bottom_banner_image from "./bottom_banner_image.png";
-import bottom_banner_image_sm from "./bottom_banner_image_sm.png";
+import bottom_banner_image from "./bottom_banner_image.jpg";
+import bottom_banner_image_sm from "./bottom_banner_sm.jpg";
 import add_address_iamge from "./add_address_image.svg";
 import organic_vegitable_image from "./organic_vegitable_image.png";
 import fresh_fruits_image from "./fresh_fruits_image.png";
@@ -214,6 +214,8 @@ export const dummyProducts = [
             "Rich in carbohydrates",
             "Ideal for curries and fries",
         ],
+        rating: 4,
+        reviewCount: 156,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -231,6 +233,8 @@ export const dummyProducts = [
             "Perfect for salads and sauces",
             "Farm fresh quality",
         ],
+        rating: 5,
+        reviewCount: 89,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -247,6 +251,8 @@ export const dummyProducts = [
             "Good for eyesight",
             "Ideal for juices and salads",
         ],
+        rating: 4,
+        reviewCount: 234,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -263,6 +269,8 @@ export const dummyProducts = [
             "High in vitamins",
             "Perfect for soups and salads",
         ],
+        rating: 3,
+        reviewCount: 67,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -279,6 +287,8 @@ export const dummyProducts = [
             "Perfect for cooking",
             "A kitchen staple",
         ],
+        rating: 4,
+        reviewCount: 178,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -299,6 +309,8 @@ export const dummyProducts = [
             "Perfect for snacking and desserts",
             "Organic and farm fresh",
         ],
+        rating: 5,
+        reviewCount: 312,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -315,6 +327,8 @@ export const dummyProducts = [
             "Rich in Vitamin C",
             "Perfect for juices and salads",
         ],
+        rating: 4,
+        reviewCount: 145,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -331,6 +345,8 @@ export const dummyProducts = [
             "High in potassium",
             "Great for smoothies and snacking",
         ],
+        rating: 4,
+        reviewCount: 267,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -339,7 +355,6 @@ export const dummyProducts = [
         _id: "ek54j45k",
         name: "Mango 1 kg",
         category: "Fruits",
-
         price: 150,
         offerPrice: 140,
         image: [mango_image_1],
@@ -348,6 +363,8 @@ export const dummyProducts = [
             "Perfect for smoothies and desserts",
             "Rich in Vitamin A",
         ],
+        rating: 5,
+        reviewCount: 189,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -364,6 +381,8 @@ export const dummyProducts = [
             "Rich in antioxidants",
             "Perfect for snacking and fruit salads",
         ],
+        rating: 4,
+        reviewCount: 98,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -383,6 +402,8 @@ export const dummyProducts = [
             "Ideal for tea, coffee, and desserts",
             "Trusted brand quality",
         ],
+        rating: 5,
+        reviewCount: 423,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -399,6 +420,8 @@ export const dummyProducts = [
             "Rich in protein",
             "Ideal for curries and snacks",
         ],
+        rating: 4,
+        reviewCount: 156,
         createdAt: "2025-03-25T07:17:46.018Z",
         updatedAt: "2025-03-25T07:18:13.103Z",
         inStock: true,
@@ -703,7 +726,6 @@ export const dummyProducts = [
         _id: "in01f25u",
         name: "Maggi Noodles 280g",
         category: "Instant",
-
         price: 55,
         offerPrice: 50,
         image: [maggi_image],

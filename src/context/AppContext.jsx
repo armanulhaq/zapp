@@ -20,7 +20,9 @@ export const AppContextProvider = ({ children }) => {
     };
 
     const addToCart = (itemId) => {
+        // Create a deep copy of the current cart items to avoid direct state mutation
         let cartData = structuredClone(cartItems);
+        //Checking if a product is already in the cartData. If yes +1, if no 1.
         if (cartData[itemId]) {
             cartData[itemId] += 1;
         } else {
