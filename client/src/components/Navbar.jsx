@@ -87,7 +87,12 @@ export const Navbar = () => {
                     </button>
                 </div>
                 {!user ? (
-                    <button className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white font-md text-sm rounded-lg font-bold">
+                    <button
+                        onClick={() => {
+                            setShowUserLogin(true);
+                        }}
+                        className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white font-md text-sm rounded-lg font-bold"
+                    >
                         Login
                     </button>
                 ) : (
