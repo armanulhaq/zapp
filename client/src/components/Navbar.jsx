@@ -13,6 +13,8 @@ export const Navbar = () => {
         navigate,
         setSearchQuery,
         searchQuery,
+        getCartCount,
+        getCartAmount,
     } = useAppContext();
 
     const logout = async () => {
@@ -112,7 +114,7 @@ export const Navbar = () => {
                         />
                     </svg>
                     <button className="absolute -top-2 -right-3 text-xs text-white bg-[#ffd60a] w-[18px] h-[18px] rounded-full">
-                        3
+                        {getCartCount()}
                     </button>
                 </div>
                 {!user ? (
@@ -120,7 +122,7 @@ export const Navbar = () => {
                         onClick={() => {
                             setShowUserLogin(true);
                         }}
-                        className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition text-white font-md text-sm rounded-lg font-bold"
+                        className="cursor-pointer px-8 py-2 bg-primary hover:bg-primary-dull transition  font-md text-sm rounded-lg font-bold"
                     >
                         Login
                     </button>
@@ -144,39 +146,61 @@ export const Navbar = () => {
                     </div>
                 )}
             </div>
-
-            <button
-                onClick={() => (open ? setOpen(false) : setOpen(true))}
-                aria-label="Menu"
-                className="sm:hidden"
-            >
-                {/* Menu Icon SVG */}
-                <svg
-                    width="21"
-                    height="15"
-                    viewBox="0 0 21 15"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+            <div className="flex gap-6 sm:hidden">
+                <div
+                    onClick={() => navigate("/cart")}
+                    className="relative cursor-pointer"
                 >
-                    <rect width="21" height="1.5" rx=".75" fill="#426287" />
-                    <rect
-                        x="8"
-                        y="6"
-                        width="13"
-                        height="1.5"
-                        rx=".75"
-                        fill="#426287"
-                    />
-                    <rect
-                        x="6"
-                        y="13"
-                        width="15"
-                        height="1.5"
-                        rx=".75"
-                        fill="#426287"
-                    />
-                </svg>
-            </button>
+                    <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M.583.583h2.333l1.564 7.81a1.17 1.17 0 0 0 1.166.94h5.67a1.17 1.17 0 0 0 1.167-.94l.933-4.893H3.5m2.333 8.75a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0m6.417 0a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0"
+                            stroke="#000000"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                    <button className="absolute -top-2 -right-3 text-xs text-white bg-[#ffd60a] w-[18px] h-[18px] rounded-full">
+                        {getCartCount()}
+                    </button>
+                </div>
+                <button
+                    onClick={() => (open ? setOpen(false) : setOpen(true))}
+                    aria-label="Menu"
+                >
+                    {/* Menu Icon SVG */}
+                    <svg
+                        width="21"
+                        height="15"
+                        viewBox="0 0 21 15"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect width="21" height="1.5" rx=".75" fill="#426287" />
+                        <rect
+                            x="8"
+                            y="6"
+                            width="13"
+                            height="1.5"
+                            rx=".75"
+                            fill="#426287"
+                        />
+                        <rect
+                            x="6"
+                            y="13"
+                            width="15"
+                            height="1.5"
+                            rx=".75"
+                            fill="#426287"
+                        />
+                    </svg>
+                </button>
+            </div>
 
             {/* Mobile Menu */}
             <div
@@ -220,14 +244,14 @@ export const Navbar = () => {
                             setOpen(false);
                             setShowUserLogin(true);
                         }}
-                        className="cursor-pointer px-6 py-2 mt-2 bg-primary  hover:bg-primary-dull transition text-white rounded-lg text-sm"
+                        className="cursor-pointer px-6 py-2 mt-2 bg-primary  hover:bg-primary-dull transition rounded-lg text-sm"
                     >
                         Login
                     </button>
                 ) : (
                     <button
                         onClick={logout}
-                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-dull transition text-white rounded-lg text-sm"
+                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-dull transition rounded-lg text-sm"
                     >
                         Logout
                     </button>
