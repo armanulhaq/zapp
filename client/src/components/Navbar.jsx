@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../index.css";
 import { NavLink } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -6,13 +6,26 @@ import { assets } from "../assets/assets";
 
 export const Navbar = () => {
     const [open, setOpen] = useState(false);
-    const { user, setUser, setShowUserLogin, navigate } = useAppContext();
+    const {
+        user,
+        setUser,
+        setShowUserLogin,
+        navigate,
+        setSearchQuery,
+        searchQuery,
+    } = useAppContext();
 
     const logout = async () => {
         setUser(null);
         navigate("/");
         setOpen(false);
     };
+
+    useEffect(() => {
+        if (searchQuery.length > 0) {
+            navigate("/products");
+        }
+    }, [searchQuery]);
 
     return (
         <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-100 bg-white relative transition-all">
@@ -34,34 +47,50 @@ export const Navbar = () => {
                 <NavLink to="/contact">Contact</NavLink>
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-100  bg-[#fff6cc] pr-5 rounded-xl">
-                    <input
-                        className="px-5 py-3 w-full outline-none placeholder-gray-400 rounded-xl"
-                        type="text"
-                        placeholder="Search products"
-                    />
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            if (searchQuery.trim()) {
+                                navigate("/products");
+                            }
+                        }}
+                        className="flex items-center w-full"
                     >
-                        <path
-                            d="M10.836 10.615 15 14.695"
-                            stroke="#7A7B7D"
-                            strokeWidth="1.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                        <input
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                            }}
+                            className="px-5 py-3 w-full outline-none placeholder-gray-400 rounded-xl"
+                            type="text"
+                            placeholder="Search products"
+                            value={searchQuery}
                         />
-                        <path
-                            clipRule="evenodd"
-                            d="M9.141 11.738c2.729-1.136 4.001-4.224 2.841-6.898S7.67.921 4.942 2.057C2.211 3.193.94 6.281 2.1 8.955s4.312 3.92 7.041 2.783"
-                            stroke="#7A7B7D"
-                            strokeWidth="1.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        />
-                    </svg>
+                        <button type="submit" className="cursor-pointer">
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M10.836 10.615 15 14.695"
+                                    stroke="#7A7B7D"
+                                    strokeWidth="1.2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                                <path
+                                    clipRule="evenodd"
+                                    d="M9.141 11.738c2.729-1.136 4.001-4.224 2.841-6.898S7.67.921 4.942 2.057C2.211 3.193.94 6.281 2.1 8.955s4.312 3.92 7.041 2.783"
+                                    stroke="#7A7B7D"
+                                    strokeWidth="1.2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                        </button>
+                    </form>
                 </div>
 
                 <div

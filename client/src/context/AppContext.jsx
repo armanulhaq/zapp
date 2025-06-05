@@ -14,6 +14,7 @@ export const AppContextProvider = ({ children }) => {
     const [showUserLogin, setShowUserLogin] = useState(false);
     const [products, setProducts] = useState([]);
     const [cartItems, setCartItems] = useState({});
+    const [searchQuery, setSearchQuery] = useState("");
 
     const fetchProducts = async () => {
         setProducts(dummyProducts);
@@ -73,6 +74,8 @@ export const AppContextProvider = ({ children }) => {
         updateCartItem,
         removeFromCart,
         cartItems,
+        searchQuery,
+        setSearchQuery,
     };
     //. Step4: Provide the context value to the children {app.jsx}
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
