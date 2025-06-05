@@ -14,7 +14,6 @@ export const Navbar = () => {
         setSearchQuery,
         searchQuery,
         getCartCount,
-        getCartAmount,
     } = useAppContext();
 
     const logout = async () => {

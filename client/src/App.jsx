@@ -8,6 +8,7 @@ import Login from "./components/Login";
 import AllProducts from "./pages/AllProducts";
 import ProductCategory from "./pages/ProductCategory";
 import ProductDetails from "./pages/ProductDetails";
+import CartPage from "./pages/CartPage";
 import Footer from "./components/Footer";
 
 function App() {
@@ -24,8 +25,6 @@ function App() {
             >
                 <Routes>
                     <Route path="/" element={<Home />} />
-                </Routes>
-                <Routes>
                     <Route path="/products" element={<AllProducts />} />
                     <Route
                         path="/products/:category"
@@ -35,8 +34,10 @@ function App() {
                         path="/products/:category/:productID"
                         element={<ProductDetails />}
                     />
+                    <Route path="/cart" element={<CartPage />} />
                 </Routes>
             </div>
+            {!isSellerPath && <Footer />}
         </>
     );
 }
