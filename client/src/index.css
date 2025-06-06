@@ -11,3 +11,7 @@
     --color-primary-dull: #ffc300;
     --color-primary-faded: #fff6cc;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
