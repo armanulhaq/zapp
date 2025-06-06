@@ -114,7 +114,7 @@ const CartPage = () => {
                                 src={assets.remove_icon}
                                 alt="remove icon"
                                 className="inline-block w-6 h-6"
-                                onClick={() => removeFromCart()}
+                                onClick={() => removeFromCart(product._id)}
                             />
                         </button>
                     </div>

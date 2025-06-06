@@ -29,7 +29,7 @@ const Footer = () => {
     ];
 
     return (
-        <div className="px-6 md:px-16 lg:px-24 xl:px-32">
+        <div className="px-6 md:px-16 lg:px-24 xl:px-32 bg-primary-faded">
             <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-gray-500/30 text-gray-500">
                 <div>
                     <div className="flex flex-start">
