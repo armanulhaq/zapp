@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors"; //Helps your backend allow requests from a different frontend (e.g., frontend on port 5173)
 import connectDB from "./configs/db.js";
 import "dotenv/config";
+import userRoute from "./routes/userRoute.js";
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.get("/", (req, res) => {
     res.send("HIIIII");
 });
+
+app.use(`/api/user`, userRoute);
 
 app.listen(port, () => {
     console.log(`Server started at ${port}`);

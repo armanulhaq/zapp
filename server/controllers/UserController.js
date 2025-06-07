@@ -21,16 +21,22 @@ export const register = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await User.create({ name, email, hashedPassword });
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+        });
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
-        });
+        }); //creates a secure token that contains the user's ID signed using your secret key
+
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            httpOnly: true, //not accessible via JavaScript (for security).
+            secure: process.env.NODE_ENV === "production", //when true cookie will be sent only over https
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //Only sends the cookie if the request is from the same site if strict. none Allows cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
         });
+        //This token is used to authenticate the user later without asking them to log in again.
         return res.json({
             success: true,
             user: { email: user.email, name: user.name },
@@ -41,3 +47,5 @@ export const register = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
+export default register;
