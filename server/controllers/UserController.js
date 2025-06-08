@@ -13,6 +13,7 @@ export const register = async (req, res) => {
             });
         }
         const existingUser = await User.findOne({ email });
+
         if (existingUser) {
             return res.json({
                 success: false,
@@ -50,7 +51,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req.body; // comes from user form
         if (!email || !password) {
             return res.json({
                 success: false,
@@ -65,6 +66,7 @@ export const login = async (req, res) => {
             });
         }
         const isMatch = await bcrypt.compare(password, user.password);
+
         if (!isMatch) {
             return res.json({ success: false, message: "Invalid credentials" });
         }
@@ -72,6 +74,7 @@ export const login = async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
+
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
@@ -82,7 +85,7 @@ export const login = async (req, res) => {
             success: true,
             user: { email: user.email, name: user.name },
             message: "User successfully created",
-        });
+        }); //Creates secure cookie with token and sends back success message
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
@@ -91,6 +94,7 @@ export const login = async (req, res) => {
 
 //Check Auth: /api/user/is-auth
 export const isAuth = async (req, res) => {
+    //authUser middleware extracts the userId from cookie and sends back info to this
     try {
         const user = await User.findById(req.userId).select("-password");
         if (!user) {
