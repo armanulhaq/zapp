@@ -1,31 +1,43 @@
-import { v2 as cloudinary } from "cloudinary";
 import Product from "../models/product.js";
+import cloudinary from "../configs/cloudinary.js";
 
 //Add Product: api/product/add
+function uploadBufferToCloudinary(buffer) {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { resource_type: "image" },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
+        stream.end(buffer);
+    });
+}
+
 export const addProduct = async (req, res) => {
     try {
-        let productData = JSON.parse(req.body.productData); //comes from user
+        let productData = JSON.parse(req.body.productData);
         const images = req.files;
+
         let imagesURL = await Promise.all(
-            //uploading product images to Cloudinary
             images.map(async (image) => {
-                let result = await cloudinary.uploader.upload(item.path, {
-                    resource_type: "image",
-                });
-                return result.secure_url();
+                const result = await uploadBufferToCloudinary(image.buffer);
+                return result.secure_url;
             })
         );
+
         await Product.create({
-            ...productData, // Spread all product details (name, price, etc)
-            image: imagesURL, // Add the Cloudinary image URLs
+            ...productData,
+            image: imagesURL,
         });
+
         res.json({ success: true, message: "Product successfully added." });
     } catch (error) {
         console.log(error.message);
         res.json({ success: false, message: error.message });
     }
 };
-
 //Get Product: api/product/list
 export const productList = async (req, res) => {
     try {

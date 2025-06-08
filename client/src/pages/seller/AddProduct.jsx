@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { assets } from "../../assets/assets";
 import { categories } from "../../assets/assets";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
     const [files, setFiles] = useState([]);
@@ -9,9 +11,41 @@ const AddProduct = () => {
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
+    const { axios, navigate } = useAppContext();
 
     const onSubmitHandler = async (event) => {
-        event.preventDefault();
+        try {
+            event.preventDefault();
+            const productData = {
+                //data coming in from sellerForm
+                name,
+                description: description.split("\n"),
+                category,
+                price,
+                offerPrice,
+            };
+            const formData = new FormData(); //built in object that gives various methods
+            formData.append("productData", JSON.stringify(productData));
+            for (let index = 0; index < files.length; index++) {
+                formData.append("images", files[index]);
+            }
+            const { data } = await axios.post("/api/product/add", formData);
+            if (data.success) {
+                toast.success(data.message);
+                //set all fields empty after post
+                setName("");
+                setDescription("");
+                setCategory("");
+                setPrice("");
+                setOfferPrice("");
+                setFiles([]);
+                navigate("/your-products");
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
 
     return (
@@ -106,7 +140,9 @@ const AddProduct = () => {
                     >
                         <option value="">Select Category</option>
                         {categories.map((item, index) => (
-                            <option key={index} value={item.path}></option>
+                            <option key={index} value={item.path}>
+                                {item.text}
+                            </option>
                         ))}
                     </select>
                 </div>

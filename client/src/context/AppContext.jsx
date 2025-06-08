@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dummyProducts } from "../assets/assets";
+import axios from "axios";
 import toast from "react-hot-toast";
+
+axios.defaults.withCredentials = true; //Lets cookies be sent with requests
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL; //"This is where my server is"
 
 export const AppContext = createContext(); //1. Step1: Create a context
 
@@ -16,8 +20,30 @@ export const AppContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
 
+    const fetchSellerStatus = async () => {
+        try {
+            const { data } = await axios.get("/api/seller/is-auth");
+            if (data.success) {
+                setIsSeller(true);
+            } else {
+                setIsSeller(false);
+            }
+        } catch (error) {
+            setIsSeller(false);
+        }
+    };
+
     const fetchProducts = async () => {
-        setProducts(dummyProducts);
+        try {
+            const { data } = await axios.get("/api/product/list");
+            if (data.success) {
+                setProducts(data.products);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.error);
+        }
     };
 
     const addToCart = (itemId) => {
@@ -75,6 +101,7 @@ export const AppContextProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        fetchSellerStatus();
         fetchProducts();
     }, []);
 
@@ -97,7 +124,10 @@ export const AppContextProvider = ({ children }) => {
         setSearchQuery,
         getCartAmount,
         getCartCount,
+        axios,
+        fetchProducts,
     };
+
     //. Step4: Provide the context value to the children {app.jsx}
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

@@ -2,6 +2,7 @@ import { useAppContext } from "../../context/AppContext";
 
 const ProductList = () => {
     const { products } = useAppContext();
+
     return (
         <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col">
             <div className="w-full md:p-10 p-4">

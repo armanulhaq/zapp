@@ -1,11 +1,11 @@
+import "dotenv/config";
 import cookieParser from "cookie-parser"; //Lets you read cookies sent by the client
 import express from "express";
 import cors from "cors"; //Helps your backend allow requests from a different frontend (e.g., frontend on port 5173)
 import connectDB from "./configs/db.js";
-import "dotenv/config";
+
 import userRoute from "./routes/userRoute.js";
 import sellerRouter from "./routes/sellerRoute.js";
-import connectCloudinary from "./configs/cloundinary.js";
 import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import addressRouter from "./routes/addressRoute.js";
@@ -16,7 +16,6 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 await connectDB();
-await connectCloudinary();
 const allowedOrigins = ["http://localhost:5173"];
 
 //Middleware configuration
@@ -30,12 +29,12 @@ app.get("/", (req, res) => {
     res.send("HIIIII");
 });
 
-app.use(`/api/user`, userRoute);
-app.use("api/seller", sellerRouter);
-app.use("api/product", productRouter);
-app.use("api/cart", cartRouter);
-app.use("api/address", addressRouter);
-app.use("api/order", orderRouter);
+app.use("/api/user", userRoute);
+app.use("/api/seller", sellerRouter);
+app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/address", addressRouter);
+app.use("/api/order", orderRouter);
 
 app.listen(port, () => {
     console.log(`Server started at ${port}`);
