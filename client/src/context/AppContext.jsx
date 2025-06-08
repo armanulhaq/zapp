@@ -29,7 +29,18 @@ export const AppContextProvider = ({ children }) => {
                 setIsSeller(false);
             }
         } catch (error) {
+            toast.error(error.message);
             setIsSeller(false);
+        }
+    };
+    //fetch user auth status and user data and cart items
+    const fetchUser = async () => {
+        try {
+            const { data } = await axios.get("api/user/is-auth");
+            setUser(data.user);
+            setCartItems(data.user.cartItems);
+        } catch (error) {
+            setUser(null);
         }
     };
 
@@ -42,7 +53,7 @@ export const AppContextProvider = ({ children }) => {
                 toast.error(data.message);
             }
         } catch (error) {
-            toast.error(error.error);
+            toast.error(error.message);
         }
     };
 
@@ -101,9 +112,25 @@ export const AppContextProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        fetchUser();
         fetchSellerStatus();
         fetchProducts();
     }, []);
+    useEffect(() => {
+        const updatedCart = async () => {
+            const { data } = await axios.post("api/cart/update", { cartItems });
+            try {
+                if (!data.success) {
+                    toast.error(data.message);
+                }
+            } catch (error) {
+                toast.error(error.message);
+            }
+        };
+        if (user) {
+            updatedCart();
+        }
+    }, [cartItems]);
 
     //Step3: put all the states that are needed in a single object
     const value = {
