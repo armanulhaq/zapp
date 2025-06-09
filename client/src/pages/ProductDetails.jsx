@@ -7,6 +7,9 @@ import { assets } from "../assets/assets";
 const ProductDetails = () => {
     const { products, navigate, addToCart } = useAppContext();
     const { productID } = useParams();
+    const productRating = {
+        rating: Math.floor(Math.random() * 2) + 3, // gives 3 or 4
+    };
     //find the product by extracting the id from url
     const specificProduct = products.find(
         (product) => product._id === productID
@@ -84,16 +87,19 @@ const ProductDetails = () => {
                             .map((_, i) => (
                                 <img
                                     key={i}
-                                    className="md:w-4 w-4"
+                                    className="md:w-3.5 w-3"
                                     src={
-                                        i < specificProduct.rating
+                                        i < productRating.rating
                                             ? assets.star_icon
                                             : assets.star_dull_icon
                                     }
                                     alt="star icon"
                                 />
                             ))}
-                        <p>({specificProduct.reviewCount})</p>
+
+                        <p>
+                            ({Math.floor(Math.random() * (1224 - 10 + 1)) + 10})
+                        </p>
                     </div>
 
                     <div className="mt-6">

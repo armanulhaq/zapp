@@ -35,7 +35,7 @@ const SellerLogin = () => {
                 onSubmit={onSubmitHandler}
                 className="min-h-screen flex items-center text-sm text-gray-600"
             >
-                <div className="flex flex-col gap-4 m-auto items-center p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white">
+                <div className="flex flex-col gap-4 m-auto items-center p-8 py-12 w-80 sm:w-[352px] rounded-lg  border border-gray-200 bg-white">
                     <p className="text-2xl">
                         <span className="text-primary">Seller</span> Login
                     </p>
@@ -47,7 +47,7 @@ const SellerLogin = () => {
                             }}
                             value={email}
                             type="email"
-                            placeholder="Enter your email"
+                            placeholder="Email: admin@gmail.com"
                             className="border border-gray-200 rounded-lg w-full p-2 mt-1 outline-primary"
                             required
                         />
@@ -60,7 +60,7 @@ const SellerLogin = () => {
                             }}
                             value={password}
                             type="password"
-                            placeholder="Enter your password"
+                            placeholder="Password: armanulhaq"
                             className="border border-gray-200 rounded-lg w-full p-2 mt-1 outline-primary"
                             required
                         />

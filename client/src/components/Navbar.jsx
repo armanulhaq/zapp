@@ -67,6 +67,15 @@ export const Navbar = () => {
                 >
                     Contact
                 </NavLink>
+                {!user && (
+                    <NavLink
+                        to="/seller"
+                        className="cursor-pointer border-b-1 border-primary"
+                        onClick={() => setOpen(false)}
+                    >
+                        Seller Login
+                    </NavLink>
+                )}
 
                 <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-100  bg-[#fff6cc] pr-5 rounded-xl">
                     <form
@@ -226,7 +235,7 @@ export const Navbar = () => {
             <div
                 className={`${
                     open ? "flex" : "hidden"
-                } absolute top-[60px] left-0 w-full bg-white shadow-sm py-4 flex-col items-center gap-4 px-5 text-sm md:hidden z-10`}
+                } absolute top-[60px] left-0 w-full bg-white shadow-sm py-10 flex-col items-center gap-4 px-5 text-sm md:hidden z-10`}
             >
                 <form
                     onSubmit={(e) => {
@@ -280,6 +289,7 @@ export const Navbar = () => {
                 >
                     Home
                 </NavLink>
+
                 <NavLink
                     to="/products"
                     className="block"
@@ -318,10 +328,19 @@ export const Navbar = () => {
                 ) : (
                     <button
                         onClick={logout}
-                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-dull transition rounded-lg text-sm"
+                        className="cursor-pointer px-6 py-2 mt-2 border-1-primary bg-primary hover:bg-primary-faded transition rounded-lg text-sm"
                     >
                         Logout
                     </button>
+                )}
+                {!user && (
+                    <NavLink
+                        to="/seller"
+                        className="cursor-pointer px-4 py-2 mt-2 border-1 border-primary  hover:bg-primary-faded transition rounded-lg text-sm"
+                        onClick={() => setOpen(false)}
+                    >
+                        Seller Login
+                    </NavLink>
                 )}
             </div>
         </nav>
