@@ -20,16 +20,20 @@ const AllProducts = () => {
         }
     }, [products, searchQuery]);
     return (
-        <div className="my-16 flex flex-col">
+        <div className="my-4 sm:my-8 px-3 sm:px-6 flex flex-col">
             <div className="flex flex-col items-end w-max">
-                <p className="text-2xl font-medium">All Products</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-medium">
+                    All Products
+                </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6 lg:grid-cols-5 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6 mt-4 sm:mt-6">
                 {filteredProducts
                     .filter((product) => product.inStock)
                     .map((product, index) => (
-                        <ProductCard key={index} product={product} />
+                        <div className="w-full">
+                            <ProductCard key={index} product={product} />
+                        </div>
                     ))}
             </div>
         </div>

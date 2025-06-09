@@ -18,7 +18,7 @@ export const ProductCard = ({ product }) => {
                     );
                     scrollTo(0, 0);
                 }}
-                className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-5  min-w-56 max-w-56 w-full"
+                className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-5 w-full"
             >
                 <div className="group cursor-pointer flex items-center justify-center p-2">
                     <img
