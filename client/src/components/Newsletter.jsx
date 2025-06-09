@@ -1,6 +1,6 @@
 const Newsletter = () => {
     return (
-        <div className="flex flex-col items-center w-full max-w-5xl lg:w-full rounded-2xl px-4 py-12 md:py-16 mx-2 lg:mx-auto my-30 bg-primary text-white">
+        <div className="flex flex-col items-center w-full max-w-5xl lg:w-full rounded-2xl px-4 py-12 md:py-16 mx-2 lg:mx-auto my-30 bg-primary-faded text-white">
             <div className="flex flex-col justify-center items-center text-center">
                 <h1 className="text-2xl lg:text-4xl md:text-[40px] text-black font-bold">
                     Get the Freshest Deals in Your Inbox
