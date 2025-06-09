@@ -33,13 +33,10 @@ const SellerLayout = () => {
     return (
         <div className="text-default min-h-screen text-gray-700 bg-white">
             <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
-                <Link to="/">
-                    <img
-                        className="h-9 cursor-pointer w-32 md:w-38"
-                        src={assets.logo}
-                        alt="logo"
-                    />
-                </Link>
+                <div className="flex items-center gap-2">
+                    <img src="/brand.png" alt="logo" className="h-9" />
+                    <p className="text-xl font-medium">Seller Dashboard</p>
+                </div>
                 <div className="flex items-center gap-5 text-gray-500">
                     <p>Hi! Admin</p>
                     <button

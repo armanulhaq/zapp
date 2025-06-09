@@ -6,8 +6,8 @@ const MainBanner = () => {
         <div className="relative">
             <img
                 src={assets.main_banner_bg}
-                alt="main banner"
-                className="w-full hidden md:block rounded-xl"
+                alt="main banner "
+                className="w-full h-[500px] hidden md:block rounded-xl object-cover"
             />
             <img
                 src={assets.main_banner_bg_sm}
@@ -35,7 +35,7 @@ const MainBanner = () => {
                     </Link>
                     <Link
                         to="/products"
-                        className="group hidden md:flex items-center gap-2 px-5 md:px-7 py-3 cursor-pointer border-1 border-white rounded-lg"
+                        className="group hidden md:flex items-center gap-2 px-5 md:px-7 py-3 cursor-pointer border-1  border-white rounded-lg"
                     >
                         Explore Deals
                         <img

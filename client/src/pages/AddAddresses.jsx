@@ -64,9 +64,12 @@ const AddAddresses = () => {
                 Add shipping{" "}
                 <span className="font-semibold text-primary">address</span>
             </p>
-            <div className="flex flex-col-reverse md:flex-row justify-between mt-10">
+            <div className="flex flex-col-reverse md:flex-row sm:gap-10 md:gap-20 lg:gap-50 justify-center mt-10">
                 <div className="flex-1 max-w-md">
-                    <form onSubmit={onSubmitHandler}>
+                    <form
+                        className="flex flex-col gap-4"
+                        onSubmit={onSubmitHandler}
+                    >
                         <div className="grid grid-cols-2 gap-4">
                             <InputField
                                 type="text"
@@ -150,11 +153,13 @@ const AddAddresses = () => {
                         </button>
                     </form>
                 </div>
-                <img
-                    src={assets.add_address_iamge}
-                    alt="Add Address"
-                    className="md:mr-16 mb-16 md:mt-0"
-                />
+                <div>
+                    <img
+                        src={assets.add_address_iamge}
+                        alt="Add Address"
+                        className="md:mr-16 mb-16 md:mt-0"
+                    />
+                </div>
             </div>
         </div>
     );

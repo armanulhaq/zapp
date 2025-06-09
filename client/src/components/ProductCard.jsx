@@ -18,17 +18,19 @@ export const ProductCard = ({ product }) => {
                     );
                     scrollTo(0, 0);
                 }}
-                className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-2 bg-gray-50 min-w-56 max-w-56 w-full"
+                className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-5  min-w-56 max-w-56 w-full"
             >
-                <div className="group cursor-pointer flex items-center justify-center px-2">
+                <div className="group cursor-pointer flex items-center justify-center p-2">
                     <img
-                        className="group-hover:scale-105 transition max-w-26 md:max-w-36"
+                        className="group-hover:scale-105 transition max-w-26 md:max-w-36 rounded-lg"
                         src={product.image[0]}
                         alt={product.name}
                     />
                 </div>
                 <div className="text-gray-500/60 text-sm">
-                    <p>{product.category}</p>
+                    <p className="bg-primary-faded rounded-full w-fit px-2 py-0.1 my-2 border-1 border-primary text-xs">
+                        {product.category}
+                    </p>
                     <p className="text-gray-700 font-medium text-lg truncate w-full">
                         {product.name}
                     </p>
