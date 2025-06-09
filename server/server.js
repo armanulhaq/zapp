@@ -17,7 +17,10 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 await connectDB();
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://zapp-lime.vercel.app",
+];
 
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebHooks);
 
