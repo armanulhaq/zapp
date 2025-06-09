@@ -2,8 +2,10 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 export const ProductCard = ({ product }) => {
-    const { currency, addToCart, removeFromCart, cartItems, navigate } =
-        useAppContext();
+    const productRating = {
+        rating: Math.floor(Math.random() * 2) + 3, // gives 3 or 4
+    };
+    const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
 
     return (
         product && (
@@ -38,20 +40,23 @@ export const ProductCard = ({ product }) => {
                                     key={i}
                                     className="md:w-3.5 w-3"
                                     src={
-                                        i < product.rating
+                                        i < productRating.rating
                                             ? assets.star_icon
                                             : assets.star_dull_icon
                                     }
                                     alt="star icon"
                                 />
                             ))}
-                        <p>({product.reviewCount})</p>
+
+                        <p>
+                            ({Math.floor(Math.random() * (1224 - 10 + 1)) + 10})
+                        </p>
                     </div>
                     <div className="flex items-end justify-between mt-3">
                         <p className="md:text-xl text-base font-medium text-black">
-                            {currency} ₹{product.offerPrice}{" "}
+                            ₹{product.offerPrice}{" "}
                             <span className="text-gray-500/60 md:text-sm text-xs line-through">
-                                {currency} ${product.price}
+                                ₹{product.price}
                             </span>
                         </p>
                         <div

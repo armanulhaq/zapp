@@ -11,7 +11,7 @@ const AddProduct = () => {
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
-    const { axios, navigate } = useAppContext();
+    const { axios, navigate, fetchProducts } = useAppContext();
 
     const onSubmitHandler = async (event) => {
         try {
@@ -39,7 +39,8 @@ const AddProduct = () => {
                 setPrice("");
                 setOfferPrice("");
                 setFiles([]);
-                navigate("/your-products");
+                await fetchProducts();
+                navigate("/seller/your-products");
             } else {
                 toast.error(data.message);
             }

@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { assets } from "../assets/assets";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddAddresses = () => {
+    const { axios, user, navigate } = useAppContext();
     const [address, setAddress] = useState({
-        firstname: "",
+        firstName: "",
         lastName: "",
         email: "",
         street: "",
@@ -37,7 +40,24 @@ const AddAddresses = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        try {
+            const { data } = await axios.post("/api/address/add", address);
+            if (data.success) {
+                toast.success(data.message);
+                navigate("/cart");
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
+
+    useEffect(() => {
+        if (!user) {
+            navigate("/cart");
+        }
+    }, []);
     return (
         <div className="mt-16 pb-16">
             <p className="text-2xl md:text-3xl text-gray-500">
@@ -52,14 +72,14 @@ const AddAddresses = () => {
                                 type="text"
                                 handleChange={handleChange}
                                 address={address}
-                                name="firstname"
+                                name="firstName"
                                 placeholder="First Name"
                             />
                             <InputField
                                 type="text"
                                 handleChange={handleChange}
                                 address={address}
-                                name="lastname"
+                                name="lastName"
                                 placeholder="Last Name"
                             />
                         </div>

@@ -57,39 +57,84 @@ export const AppContextProvider = ({ children }) => {
         }
     };
 
-    const addToCart = (itemId) => {
-        // Create a deep copy of the current cart items to avoid direct state mutation
-        let cartData = structuredClone(cartItems);
-        //Checking if a product is already in the cartData. If yes +1, if no 1.
-        if (cartData[itemId]) {
-            cartData[itemId] += 1;
-        } else {
-            cartData[itemId] = 1;
+    const addToCart = async (itemId) => {
+        try {
+            // Create a deep copy of the current cart items to avoid direct state mutation
+            let cartData = structuredClone(cartItems);
+            //Checking if a product is already in the cartData. If yes +1, if no 1.
+            if (cartData[itemId]) {
+                cartData[itemId] += 1;
+            } else {
+                cartData[itemId] = 1;
+            }
+            setCartItems(cartData);
+
+            // Update cart in backend
+            const { data } = await axios.post("/api/cart/update", {
+                userId: user._id,
+                cartItems: cartData,
+            });
+
+            if (data.success) {
+                toast.success("Added to cart");
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
         }
-        setCartItems(cartData);
-        toast.success("Added to cart");
     };
 
     //Update cart item quantity
-    const updateCartItem = (itemId, quantity) => {
-        let cartData = structuredClone(cartItems);
-        cartData[itemId] = quantity;
-        setCartItems(cartData);
-        toast.success("Cart updated");
+    const updateCartItem = async (itemId, quantity) => {
+        try {
+            let cartData = structuredClone(cartItems);
+            cartData[itemId] = quantity;
+            setCartItems(cartData);
+
+            // Update cart in backend
+            const { data } = await axios.post("/api/cart/update", {
+                userId: user._id,
+                cartItems: cartData,
+            });
+
+            if (data.success) {
+                toast.success("Cart updated");
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
 
     //remove product from cart
-    const removeFromCart = (itemId) => {
-        let cartData = structuredClone(cartItems);
-        if (cartData[itemId]) {
-            cartData[itemId] -= 1;
-            if (cartData[itemId] === 0) {
-                delete cartData[itemId];
+    const removeFromCart = async (itemId) => {
+        try {
+            let cartData = structuredClone(cartItems);
+            if (cartData[itemId]) {
+                cartData[itemId] -= 1;
+                if (cartData[itemId] === 0) {
+                    delete cartData[itemId];
+                }
             }
-        }
 
-        toast.success("Removed to cart");
-        setCartItems(cartData);
+            setCartItems(cartData);
+
+            // Update cart in backend
+            const { data } = await axios.post("/api/cart/update", {
+                userId: user._id,
+                cartItems: cartData,
+            });
+
+            if (data.success) {
+                toast.success("Removed from cart");
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
 
     //calculate total cart items
@@ -153,6 +198,7 @@ export const AppContextProvider = ({ children }) => {
         getCartCount,
         axios,
         fetchProducts,
+        setCartItems,
     };
 
     //. Step4: Provide the context value to the children {app.jsx}

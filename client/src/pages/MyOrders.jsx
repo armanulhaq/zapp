@@ -1,14 +1,27 @@
 import { useEffect, useState } from "react";
-import { dummyOrders } from "../assets/assets";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const MyOrders = () => {
     const [myOrders, setMyOrders] = useState([]);
+    const { axios, user } = useAppContext();
     const fetchMyOrders = async () => {
-        setMyOrders(dummyOrders);
+        try {
+            const { data } = await axios.get("/api/order/user");
+            if (data.success) {
+                setMyOrders(data.orders);
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
     };
     useEffect(() => {
-        fetchMyOrders();
-    }, []);
+        if (user) {
+            fetchMyOrders();
+        }
+    }, [user]);
     return (
         <div className="my-16 max-w-4xl mx-auto">
             <div className="flex flex-col mb-8">
@@ -50,11 +63,11 @@ const MyOrders = () => {
                             </div>
                             <div className="flex flex-col gap-1 text-gray-500">
                                 <p>Quantity: {item.quantity}</p>
-                                <p>Status: {item.status}</p>
+                                <p>Status: {order.status}</p>
                                 <p>
                                     Date:{" "}
                                     {new Date(
-                                        order.createAt
+                                        order.createdAt
                                     ).toLocaleDateString()}
                                 </p>
                             </div>
