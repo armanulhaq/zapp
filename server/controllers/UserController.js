@@ -33,9 +33,14 @@ export const register = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true, //not accessible via JavaScript (for security).
-            secure: process.env.NODE_ENV === "production", //when true cookie will be sent only over https
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //Only sends the cookie if the request is from the same site if strict. none Allows cross-site cookies
+            secure: true, //always use secure in production
+            sameSite: "none", //allow cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
+            path: "/", //ensure cookie is available for all paths
+            domain:
+                process.env.NODE_ENV === "production"
+                    ? ".vercel.app"
+                    : undefined, //set domain in production
         });
         //This token is used to authenticate the user later without asking them to log in again.
         return res.json({

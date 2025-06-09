@@ -29,7 +29,14 @@ app.use(express.json()); //It tells your Express app to automatically parse any 
 //express.json(): This is built-in middleware in Express that parses JSON request bodies and makes the data available on req.body.
 
 app.use(cookieParser());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(
+    cors({
+        origin: allowedOrigins,
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    })
+);
 
 app.get("/", (req, res) => {
     res.send("HIIIII");
