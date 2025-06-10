@@ -239,7 +239,7 @@ const CartPage = () => {
                             DELIVERY ADDRESS
                             {selectedAddress && (
                                 <span
-                                    className="text-green-500 cursor-pointer text-sm"
+                                    className="text-primary cursor-pointer text-sm"
                                     onClick={() =>
                                         setShowAddressSelectionBox(
                                             !showAddressSelectionBox

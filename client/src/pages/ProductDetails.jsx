@@ -5,7 +5,8 @@ import { ProductCard } from "../components/ProductCard";
 import { assets } from "../assets/assets";
 
 const ProductDetails = () => {
-    const { products, navigate, addToCart } = useAppContext();
+    const { products, navigate, addToCart, removeFromCart, cartItems } =
+        useAppContext();
     const { productID } = useParams();
 
     // Generate consistent random numbers based on product ID
@@ -131,18 +132,42 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="flex items-center mt-10 gap-4 text-base">
-                        <button
-                            onClick={() => addToCart(specificProduct._id)}
-                            className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition"
-                        >
-                            Add to Cart
-                        </button>
+                        {!cartItems[specificProduct._id] ? (
+                            <button
+                                onClick={() => addToCart(specificProduct._id)}
+                                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition"
+                            >
+                                Add to Cart
+                            </button>
+                        ) : (
+                            <div className="flex items-center justify-center gap-2 w-32 h-[42px] bg-primary-faded rounded select-none">
+                                <button
+                                    onClick={() =>
+                                        removeFromCart(specificProduct._id)
+                                    }
+                                    className="cursor-pointer text-md px-2 h-full text-black"
+                                >
+                                    -
+                                </button>
+                                <span className="w-5 text-center text-black">
+                                    {cartItems[specificProduct._id]}
+                                </span>
+                                <button
+                                    onClick={() =>
+                                        addToCart(specificProduct._id)
+                                    }
+                                    className="cursor-pointer text-md px-2 h-full text-black"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        )}
                         <button
                             onClick={() => {
                                 addToCart(specificProduct._id);
                                 navigate("/cart");
                             }}
-                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary  hover:bg-primary-dull transition"
+                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary hover:bg-primary-dull transition"
                         >
                             Buy now
                         </button>

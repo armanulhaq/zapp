@@ -70,29 +70,32 @@ export const AppContextProvider = ({ children }) => {
                 setShowUserLogin(true);
                 return;
             }
-            // Create a deep copy of the current cart items to avoid direct state mutation
+
+            // Update local state immediately for better UX
             let cartData = structuredClone(cartItems);
-            //Checking if a product is already in the cartData. If yes +1, if no 1.
             if (cartData[itemId]) {
                 cartData[itemId] += 1;
             } else {
                 cartData[itemId] = 1;
             }
+            setCartItems(cartData);
 
-            // Update cart in backend first
+            // Then sync with backend
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
                 cartItems: cartData,
             });
 
-            if (data.success) {
-                // Only update state after successful API call
-                setCartItems(cartData);
-                toast.success("Added to cart");
-            } else {
+            if (!data.success) {
+                // Revert local state if backend update fails
+                setCartItems(cartItems);
                 toast.error(data.message);
+            } else {
+                toast.success("Added to cart");
             }
         } catch (error) {
+            // Revert local state if API call fails
+            setCartItems(cartItems);
             if (error.response?.status === 401) {
                 setUser(null);
                 setCartItems({});
