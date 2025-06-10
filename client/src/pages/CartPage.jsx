@@ -8,6 +8,8 @@ const CartPage = () => {
     const [cartArray, setCartArray] = useState([]);
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [paymentOption, setPaymentOption] = useState("COD");
+    const [showAddressSelectionBox, setShowAddressSelectionBox] =
+        useState(false);
 
     const {
         cartItems,
@@ -25,6 +27,7 @@ const CartPage = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const paymentCanceled = query.get("payment_canceled");
+    const newAddressId = location.state?.newAddressId;
 
     useEffect(() => {
         refreshCartData(true);
@@ -67,7 +70,21 @@ const CartPage = () => {
                     );
                     if (data.success) {
                         if (data.addresses.length > 0) {
-                            setSelectedAddress(data.addresses[0]);
+                            if (newAddressId) {
+                                // Select the newly added address
+                                const newlyAddedAddress = data.addresses.find(
+                                    (addr) => addr._id === newAddressId
+                                );
+                                if (newlyAddedAddress) {
+                                    setSelectedAddress(newlyAddedAddress);
+                                } else {
+                                    // Fallback to the first address if newAddressId not found
+                                    setSelectedAddress(data.addresses[0]);
+                                }
+                            } else {
+                                // Select the first address if no new address was added
+                                setSelectedAddress(data.addresses[0]);
+                            }
                         }
                     } else {
                         toast.error(data.message);
@@ -78,7 +95,7 @@ const CartPage = () => {
             };
             fetchAddresses();
         }
-    }, [user]);
+    }, [user, newAddressId]);
 
     const placeOrder = async () => {
         try {
@@ -218,30 +235,53 @@ const CartPage = () => {
                 <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     {/* Delivery Address */}
                     <div className="mb-4">
-                        <h3 className="text-lg font-medium mb-2">
+                        <h3 className="text-lg font-medium mb-2 flex justify-between items-center">
                             DELIVERY ADDRESS
-                        </h3>
-                        {selectedAddress ? (
-                            <div className="text-gray-700">
-                                <p>
-                                    {selectedAddress.firstName}{" "}
-                                    {selectedAddress.lastName}
-                                </p>
-                                <p>{selectedAddress.street}</p>
-                                <p>
-                                    {selectedAddress.city},{" "}
-                                    {selectedAddress.state}{" "}
-                                    {selectedAddress.zipcode}
-                                </p>
-                                <p>{selectedAddress.country}</p>
-                                <p>Phone: {selectedAddress.phone}</p>
-                                <p
-                                    className="text-primary cursor-pointer mt-2"
-                                    onClick={() => navigate("/add-address")}
+                            {selectedAddress && (
+                                <span
+                                    className="text-green-500 cursor-pointer text-sm"
+                                    onClick={() =>
+                                        setShowAddressSelectionBox(
+                                            !showAddressSelectionBox
+                                        )
+                                    }
                                 >
                                     Change
-                                </p>
-                            </div>
+                                </span>
+                            )}
+                        </h3>
+                        {selectedAddress ? (
+                            showAddressSelectionBox ? (
+                                <div className="border border-gray-300 rounded-md p-4">
+                                    <p className="text-gray-700">
+                                        {selectedAddress.street},{" "}
+                                        {selectedAddress.city},{" "}
+                                        {selectedAddress.state},{" "}
+                                        {selectedAddress.country}
+                                    </p>
+                                    <p
+                                        className="text-primary cursor-pointer mt-4"
+                                        onClick={() => navigate("/add-address")}
+                                    >
+                                        Add address
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="text-gray-700">
+                                    <p>
+                                        {selectedAddress.firstName}{" "}
+                                        {selectedAddress.lastName}
+                                    </p>
+                                    <p>{selectedAddress.street}</p>
+                                    <p>
+                                        {selectedAddress.city},{" "}
+                                        {selectedAddress.state}{" "}
+                                        {selectedAddress.zipcode}
+                                    </p>
+                                    <p>{selectedAddress.country}</p>
+                                    <p>Phone: {selectedAddress.phone}</p>
+                                </div>
+                            )
                         ) : (
                             <button
                                 onClick={() => navigate("/add-address")}

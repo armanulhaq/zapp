@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 const AddAddresses = () => {
     const { axios, user, navigate } = useAppContext();
-    const [address, setAddress] = useState({
+    const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
         email: "",
@@ -17,34 +17,23 @@ const AddAddresses = () => {
         phone: "",
     });
 
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setAddress((prevAddress) => ({
-            ...prevAddress,
+        setFormData((prev) => ({
+            ...prev,
             [name]: value,
         }));
-    };
-    const InputField = ({ type, placeholder, name, handleChange, address }) => {
-        return (
-            <input
-                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
-                type={type}
-                placeholder={placeholder}
-                onChange={handleChange}
-                name={name}
-                value={address[name]}
-                required
-            />
-        );
     };
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post("/api/address/add", address);
+            const { data } = await axios.post("/api/address/add", formData);
             if (data.success) {
                 toast.success(data.message);
-                navigate("/cart");
+                navigate("/cart", {
+                    state: { newAddressId: data.address._id },
+                });
             } else {
                 toast.error(data.message);
             }
@@ -57,7 +46,8 @@ const AddAddresses = () => {
         if (!user) {
             navigate("/cart");
         }
-    }, []);
+    }, [user]);
+
     return (
         <div className="mt-16 pb-16">
             <p className="text-2xl md:text-3xl text-gray-500">
@@ -71,84 +61,96 @@ const AddAddresses = () => {
                         onSubmit={onSubmitHandler}
                     >
                         <div className="grid grid-cols-2 gap-4">
-                            <InputField
+                            <input
                                 type="text"
-                                handleChange={handleChange}
-                                address={address}
                                 name="firstName"
+                                value={formData.firstName}
+                                onChange={handleInputChange}
                                 placeholder="First Name"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
-                            <InputField
+                            <input
                                 type="text"
-                                handleChange={handleChange}
-                                address={address}
                                 name="lastName"
+                                value={formData.lastName}
+                                onChange={handleInputChange}
                                 placeholder="Last Name"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
                         </div>
-                        <InputField
-                            handleChange={handleChange}
-                            address={address}
-                            name="email"
+                        <input
                             type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
                             placeholder="Email address"
+                            className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                            required
                         />
-                        <InputField
-                            handleChange={handleChange}
-                            address={address}
-                            name="street"
+                        <input
                             type="text"
+                            name="street"
+                            value={formData.street}
+                            onChange={handleInputChange}
                             placeholder="Street"
+                            className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                            required
                         />
                         <div className="grid grid-cols-2 gap-4">
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
-                                name="city"
+                            <input
                                 type="text"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleInputChange}
                                 placeholder="City"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
+                            <input
+                                type="text"
                                 name="state"
-                                type="text"
+                                value={formData.state}
+                                onChange={handleInputChange}
                                 placeholder="State"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
+                            <input
+                                type="text"
                                 name="zipcode"
-                                type="number"
+                                value={formData.zipcode}
+                                onChange={handleInputChange}
                                 placeholder="Zip Code"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
+                            <input
+                                type="text"
                                 name="country"
-                                type="text"
+                                value={formData.country}
+                                onChange={handleInputChange}
                                 placeholder="Country"
+                                className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                                required
                             />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
-                                name="city"
-                                type="text"
-                                placeholder="City"
-                            />
-                            <InputField
-                                handleChange={handleChange}
-                                address={address}
-                                name="phone"
-                                type="number"
-                                placeholder="Phone"
-                            />
-                        </div>
-                        <button className="w-full mt-6 bg-primary rounded-lg py-3 hover:bg-primary-dull transition cursor-pointer uppercase ">
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder="Phone"
+                            className="w-full px-2 py-2.5 border border-gray-500/30 rounded outline-none text-gray-500 focus:border-primary transition"
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="w-full mt-6 bg-primary text-white rounded-lg py-3 hover:bg-primary-dull transition cursor-pointer uppercase"
+                        >
                             Save Address
                         </button>
                     </form>
