@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -12,12 +12,14 @@ export const AppContextProvider = ({ children }) => {
     const currency = import.meta.VITE_CURRENCY;
 
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState(null);
     const [isSeller, setIsSeller] = useState(false);
     const [showUserLogin, setShowUserLogin] = useState(false);
     const [products, setProducts] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
+    const [forceRefresh, setForceRefresh] = useState(0);
 
     const fetchSellerStatus = async () => {
         try {
@@ -200,6 +202,24 @@ export const AppContextProvider = ({ children }) => {
         return Math.floor(totalAmount * 100) / 100;
     };
 
+    // Add a new function to refresh cart data
+    const refreshCartData = async (force = false) => {
+        try {
+            if (user) {
+                const { data } = await axios.get("api/user/is-auth");
+                if (data.success) {
+                    setCartItems(data.user.cartItems || {});
+                    if (force) {
+                        setForceRefresh((prev) => prev + 1);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error refreshing cart:", error);
+            setCartItems({});
+        }
+    };
+
     useEffect(() => {
         fetchUser();
         fetchSellerStatus();
@@ -238,6 +258,40 @@ export const AppContextProvider = ({ children }) => {
         }
     }, [cartItems]);
 
+    // Refresh cart on route changes
+    useEffect(() => {
+        refreshCartData(true);
+    }, [location.pathname]);
+
+    // Add visibility change handler to refresh cart when returning to the tab
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "visible") {
+                refreshCartData(true);
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        return () => {
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
+            );
+        };
+    }, [user]);
+
+    // Force refresh cart when returning from external pages
+    useEffect(() => {
+        const handlePopState = () => {
+            refreshCartData(true);
+        };
+
+        window.addEventListener("popstate", handlePopState);
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, [user]);
+
     //Step3: put all the states that are needed in a single object
     const value = {
         navigate,
@@ -260,6 +314,8 @@ export const AppContextProvider = ({ children }) => {
         axios,
         fetchProducts,
         setCartItems,
+        refreshCartData,
+        forceRefresh,
     };
 
     //. Step4: Provide the context value to the children {app.jsx}

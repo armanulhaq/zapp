@@ -24,12 +24,16 @@ function App() {
 
     const { showUserLogin, isSeller } = useAppContext();
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             {isSellerPath ? null : <Navbar />}
             {showUserLogin ? <Login /> : null}
             <Toaster />
             <div
-                className={`${isSellerPath}? "": px-6 md:px-16 lg:px-24 xl:px-32`}
+                className={`flex-1 ${
+                    isSellerPath
+                        ? ""
+                        : "px-6 md:px-16 lg:px-24 flex justify-center items-center xl:px-32"
+                }`}
             >
                 <Routes>
                     <Route path="/" element={<Home />} />
@@ -60,7 +64,7 @@ function App() {
                 </Routes>
             </div>
             {!isSellerPath && <Footer />}
-        </>
+        </div>
     );
 }
 

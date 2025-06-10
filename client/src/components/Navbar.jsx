@@ -17,6 +17,8 @@ export const Navbar = () => {
         getCartCount,
         axios,
         setCartItems,
+        refreshCartData,
+        forceRefresh,
     } = useAppContext();
 
     const logout = async () => {
@@ -44,6 +46,11 @@ export const Navbar = () => {
             navigate("/products");
         }
     }, [searchQuery]);
+
+    // Add effect to refresh cart count when forceRefresh changes
+    useEffect(() => {
+        refreshCartData(true);
+    }, [forceRefresh]);
 
     return (
         <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-100 bg-white relative transition-all">
@@ -180,7 +187,10 @@ export const Navbar = () => {
             </div>
             <div className="flex gap-6 sm:hidden">
                 <div
-                    onClick={() => navigate("/cart")}
+                    onClick={() => {
+                        navigate("/cart");
+                        setOpen(false);
+                    }}
                     className="relative cursor-pointer"
                 >
                     <svg

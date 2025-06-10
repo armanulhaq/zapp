@@ -31,6 +31,7 @@ import maggi_image from "./maggi_image.png";
 import dairy_product_image from "./dairy_product_image.png";
 import bakery_image from "./bakery_image.png";
 import grain_image from "./grain_image.png";
+import empty_box from "./empty_box.svg";
 
 export const assets = {
     search_icon,
@@ -65,6 +66,7 @@ export const assets = {
     bakery_image,
     grain_image,
     bottom_banner_image_sm,
+    empty_box,
 };
 
 export const categories = [

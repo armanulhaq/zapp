@@ -81,7 +81,7 @@ export const placeOrderStripe = async (req, res) => {
         //create line items for stripe
         const lineItems = productData.map((item) => {
             // Convert INR to USD by dividing by 88
-            const priceInUSD = (item.price + item.price * 0.07) / 88;
+            const priceInUSD = (item.price + item.price * 0.07) / 87;
             return {
                 price_data: {
                     currency: "usd",
@@ -98,8 +98,8 @@ export const placeOrderStripe = async (req, res) => {
         const session = await stripeInstance.checkout.sessions.create({
             line_items: lineItems,
             mode: "payment",
-            success_url: `${origin}/loader?next=my-orders`,
-            cancel_url: `${origin}/cart`, // Add cancel URL to return to cart
+            success_url: `${origin}/loader?next=my-orders&clear_cart=true`,
+            cancel_url: `${origin}/cart?payment_canceled=true`,
             metadata: {
                 orderId: order._id.toString(),
                 userId,
