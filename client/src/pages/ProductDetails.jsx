@@ -163,36 +163,18 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="flex items-center mt-10 gap-4 text-base">
-                        {/* Fixed: Use currentCartQuantity instead of direct cartItems access */}
-                        {currentCartQuantity === 0 ? (
-                            <button
-                                onClick={handleAddToCart}
-                                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-xl hover:bg-gray-200 transition"
-                            >
-                                Add to Cart
-                            </button>
-                        ) : (
-                            <div className="flex items-center justify-center gap-2 w-32 h-[42px] bg-primary-faded rounded-xl select-none">
-                                <button
-                                    onClick={handleRemoveFromCart}
-                                    className="cursor-pointer text-md px-2 h-full text-black  rounded-l-xl transition"
-                                >
-                                    -
-                                </button>
-                                <span className="w-5 text-center text-black">
-                                    {currentCartQuantity}
-                                </span>
-                                <button
-                                    onClick={handleAddToCart}
-                                    className="cursor-pointer text-md px-2 h-full text-black rounded-r-xl transition"
-                                >
-                                    +
-                                </button>
-                            </div>
-                        )}
                         <button
-                            onClick={handleBuyNow}
-                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary hover:bg-primary-dull transition"
+                            onClick={() => addToCart(specificProduct._id)}
+                            className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition"
+                        >
+                            Add to Cart
+                        </button>
+                        <button
+                            onClick={() => {
+                                addToCart(specificProduct._id);
+                                navigate("/cart");
+                            }}
+                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary  hover:bg-primary-dull transition"
                         >
                             Buy now
                         </button>
