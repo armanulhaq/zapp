@@ -73,7 +73,7 @@ const ProductDetails = () => {
                             <div
                                 key={index}
                                 onClick={() => setThumbnail(image)}
-                                className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer"
+                                className="border max-w-24 border-gray-500/30 rounded-xl overflow-hidden cursor-pointer"
                             >
                                 <img
                                     src={image}
@@ -83,7 +83,7 @@ const ProductDetails = () => {
                         ))}
                     </div>
 
-                    <div className="border border-gray-500/30 max-w-100 rounded overflow-hidden">
+                    <div className="border border-gray-500/30 max-w-100 rounded-xl overflow-hidden">
                         <img src={thumbnail} alt="Selected product" />
                     </div>
                 </div>
@@ -135,12 +135,12 @@ const ProductDetails = () => {
                         {!cartItems[specificProduct._id] ? (
                             <button
                                 onClick={() => addToCart(specificProduct._id)}
-                                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition"
+                                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-xl hover:bg-gray-200 transition"
                             >
                                 Add to Cart
                             </button>
                         ) : (
-                            <div className="flex items-center justify-center gap-2 w-32 h-[42px] bg-primary-faded rounded select-none">
+                            <div className="flex items-center justify-center gap-2 w-32 h-[42px] bg-primary-faded rounded-xl select-none">
                                 <button
                                     onClick={() =>
                                         removeFromCart(specificProduct._id)
@@ -167,7 +167,7 @@ const ProductDetails = () => {
                                 addToCart(specificProduct._id);
                                 navigate("/cart");
                             }}
-                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary hover:bg-primary-dull transition"
+                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary  hover:bg-primary-dull transition"
                         >
                             Buy now
                         </button>
