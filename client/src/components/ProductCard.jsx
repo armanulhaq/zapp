@@ -2,10 +2,20 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 export const ProductCard = ({ product }) => {
-    const productRating = {
-        rating: Math.floor(Math.random() * 2) + 3, // gives 3 or 4
-    };
     const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
+
+    // Generate consistent random numbers based on product ID
+    const getConsistentRandom = (id, min, max) => {
+        // Use the product ID to generate a consistent number
+        const hash = id.split("").reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+        return (Math.abs(hash) % (max - min + 1)) + min;
+    };
+
+    // Get consistent rating (3-4) and review count (10-1000) based on product ID
+    const rating = getConsistentRandom(product._id, 3, 5);
+    const reviewCount = getConsistentRandom(product._id, 10, 1000);
 
     return (
         product && (
@@ -42,7 +52,7 @@ export const ProductCard = ({ product }) => {
                                     key={i}
                                     className="md:w-3.5 w-3"
                                     src={
-                                        i < productRating.rating
+                                        i < rating
                                             ? assets.star_icon
                                             : assets.star_dull_icon
                                     }
@@ -50,9 +60,7 @@ export const ProductCard = ({ product }) => {
                                 />
                             ))}
 
-                        <p>
-                            ({Math.floor(Math.random() * (1224 - 10 + 1)) + 10})
-                        </p>
+                        <p>({reviewCount})</p>
                     </div>
                     <div className="flex items-end justify-between mt-3">
                         <p className="md:text-xl text-base font-medium text-black">

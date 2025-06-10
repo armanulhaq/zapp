@@ -36,10 +36,16 @@ export const AppContextProvider = ({ children }) => {
     const fetchUser = async () => {
         try {
             const { data } = await axios.get("api/user/is-auth");
-            setUser(data.user);
-            setCartItems(data.user.cartItems);
+            if (data.success) {
+                setUser(data.user);
+                setCartItems(data.user.cartItems);
+            } else {
+                setUser(null);
+                setCartItems({});
+            }
         } catch (error) {
             setUser(null);
+            setCartItems({});
         }
     };
 
@@ -198,7 +204,24 @@ export const AppContextProvider = ({ children }) => {
         fetchUser();
         fetchSellerStatus();
         fetchProducts();
+
+        // Set up periodic auth check
+        const authCheckInterval = setInterval(fetchUser, 5 * 60 * 1000); // Check every 5 minutes
+
+        // Clean up interval on unmount
+        return () => clearInterval(authCheckInterval);
     }, []);
+
+    // Add auth check on window focus
+    useEffect(() => {
+        const handleFocus = () => {
+            fetchUser();
+        };
+
+        window.addEventListener("focus", handleFocus);
+        return () => window.removeEventListener("focus", handleFocus);
+    }, []);
+
     useEffect(() => {
         const updatedCart = async () => {
             const { data } = await axios.post("api/cart/update", { cartItems });
