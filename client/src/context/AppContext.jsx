@@ -78,24 +78,21 @@ export const AppContextProvider = ({ children }) => {
             } else {
                 cartData[itemId] = 1;
             }
-            setCartItems(cartData);
 
-            // Update cart in backend
+            // Update cart in backend first
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
                 cartItems: cartData,
             });
 
             if (data.success) {
+                // Only update state after successful API call
+                setCartItems(cartData);
                 toast.success("Added to cart");
             } else {
-                // Revert cart state if update fails
-                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
-            // Revert cart state if update fails
-            setCartItems(structuredClone(cartItems));
             if (error.response?.status === 401) {
                 setUser(null);
                 setCartItems({});
@@ -114,24 +111,21 @@ export const AppContextProvider = ({ children }) => {
             }
             let cartData = structuredClone(cartItems);
             cartData[itemId] = quantity;
-            setCartItems(cartData);
 
-            // Update cart in backend
+            // Update cart in backend first
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
                 cartItems: cartData,
             });
 
             if (data.success) {
+                // Only update state after successful API call
+                setCartItems(cartData);
                 toast.success("Cart updated");
             } else {
-                // Revert cart state if update fails
-                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
-            // Revert cart state if update fails
-            setCartItems(structuredClone(cartItems));
             if (error.response?.status === 401) {
                 setUser(null);
                 setCartItems({});
@@ -156,24 +150,20 @@ export const AppContextProvider = ({ children }) => {
                 }
             }
 
-            setCartItems(cartData);
-
-            // Update cart in backend
+            // Update cart in backend first
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
                 cartItems: cartData,
             });
 
             if (data.success) {
+                // Only update state after successful API call
+                setCartItems(cartData);
                 toast.success("Removed from cart");
             } else {
-                // Revert cart state if update fails
-                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
-            // Revert cart state if update fails
-            setCartItems(structuredClone(cartItems));
             if (error.response?.status === 401) {
                 setUser(null);
                 setCartItems({});

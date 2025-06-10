@@ -129,9 +129,9 @@ const CartPage = () => {
 
     return cartArray.length > 0 ? (
         <div className="flex flex-col md:flex-row mt-16 mb-20 border-b-1 border-gray-200 pb-20">
-            <div className="flex-1 max-w-4xl ">
+            <div className="flex-1 max-w-4xl border border-gray-200 rounded-lg p-6">
                 <h1 className="text-3xl font-medium mb-6">
-                    Your Groceries\' Cart{" "}
+                    Your Groceries' Cart{" "}
                 </h1>
 
                 <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
@@ -215,7 +215,7 @@ const CartPage = () => {
             {/* Order Summary */}
             <div className="md:max-w-[400px] w-full mt-10 md:mt-0 md:ml-10">
                 <h2 className="text-2xl font-medium mb-4">Order Summary</h2>
-                <div className="bg-gray-100 p-4 rounded-lg">
+                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     {/* Delivery Address */}
                     <div className="mb-4">
                         <h3 className="text-lg font-medium mb-2">
@@ -298,7 +298,7 @@ const CartPage = () => {
 
                     <button
                         onClick={placeOrder}
-                        className="mt-6 w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark transition"
+                        className="mt-6 w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark transition cursor-pointer"
                     >
                         Place Order
                     </button>

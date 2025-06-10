@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
+import Loader from "../components/Loader";
 
 const MyOrders = () => {
     const [myOrders, setMyOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { axios, user } = useAppContext();
     const fetchMyOrders = async () => {
         try {
+            setLoading(true);
             const { data } = await axios.get("/api/order/user");
             if (data.success) {
                 setMyOrders(data.orders);
@@ -15,6 +18,8 @@ const MyOrders = () => {
             }
         } catch (error) {
             toast.error(error.message);
+        } finally {
+            setLoading(false);
         }
     };
     useEffect(() => {
@@ -22,6 +27,11 @@ const MyOrders = () => {
             fetchMyOrders();
         }
     }, [user]);
+
+    if (loading) {
+        return <Loader />;
+    }
+
     return (
         <div className="my-16 max-w-4xl mx-auto">
             <div className="flex flex-col mb-8">

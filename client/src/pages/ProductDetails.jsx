@@ -7,9 +7,16 @@ import { assets } from "../assets/assets";
 const ProductDetails = () => {
     const { products, navigate, addToCart } = useAppContext();
     const { productID } = useParams();
-    const productRating = {
-        rating: Math.floor(Math.random() * 2) + 3, // gives 3 or 4
+
+    // Generate consistent random numbers based on product ID
+    const getConsistentRandom = (id, min, max) => {
+        // Use the product ID to generate a consistent number
+        const hash = id.split("").reduce((acc, char) => {
+            return char.charCodeAt(0) + ((acc << 5) - acc);
+        }, 0);
+        return (Math.abs(hash) % (max - min + 1)) + min;
     };
+
     //find the product by extracting the id from url
     const specificProduct = products.find(
         (product) => product._id === productID
@@ -39,6 +46,10 @@ const ProductDetails = () => {
     if (!specificProduct) {
         return <div>Product not found</div>;
     }
+
+    // Get consistent rating (3-5) and review count (10-1000) based on product ID
+    const rating = getConsistentRandom(specificProduct._id, 3, 5);
+    const reviewCount = getConsistentRandom(specificProduct._id, 10, 1000);
 
     return (
         <div className="mt-12">
@@ -89,7 +100,7 @@ const ProductDetails = () => {
                                     key={i}
                                     className="md:w-3.5 w-3"
                                     src={
-                                        i < productRating.rating
+                                        i < rating
                                             ? assets.star_icon
                                             : assets.star_dull_icon
                                     }
@@ -97,9 +108,7 @@ const ProductDetails = () => {
                                 />
                             ))}
 
-                        <p>
-                            ({Math.floor(Math.random() * (1224 - 10 + 1)) + 10})
-                        </p>
+                        <p>({reviewCount})</p>
                     </div>
 
                     <div className="mt-6">
