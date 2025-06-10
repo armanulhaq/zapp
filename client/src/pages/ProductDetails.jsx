@@ -26,7 +26,6 @@ const ProductDetails = () => {
     const [thumbnail, setThumbnail] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
-    // Fixed: Added productID dependency to useEffect for related products
     useEffect(() => {
         if (specificProduct) {
             let productsCopy = products.slice();
@@ -37,14 +36,13 @@ const ProductDetails = () => {
             );
             setRelatedProducts(relatedproducts.slice(0, 5));
         }
-    }, [products, specificProduct]); // Added specificProduct dependency
+    }, [products]);
 
-    // Fixed: Added productID dependency to useEffect for thumbnail
     useEffect(() => {
         if (specificProduct?.image?.[0]) {
             setThumbnail(specificProduct.image[0]);
         }
-    }, [specificProduct]); // This was correct
+    }, [specificProduct]);
 
     if (!specificProduct) {
         return <div>Product not found</div>;
@@ -53,35 +51,6 @@ const ProductDetails = () => {
     // Get consistent rating (3-5) and review count (10-1000) based on product ID
     const rating = getConsistentRandom(specificProduct._id, 3, 5);
     const reviewCount = getConsistentRandom(specificProduct._id, 10, 1000);
-
-    // Fixed: Get current cart quantity with fallback to 0
-    const currentCartQuantity = cartItems[specificProduct._id] || 0;
-
-    // Fixed: Add error handling for cart operations
-    const handleAddToCart = () => {
-        try {
-            addToCart(specificProduct._id);
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-        }
-    };
-
-    const handleRemoveFromCart = () => {
-        try {
-            removeFromCart(specificProduct._id);
-        } catch (error) {
-            console.error("Error removing from cart:", error);
-        }
-    };
-
-    const handleBuyNow = () => {
-        try {
-            addToCart(specificProduct._id);
-            navigate("/cart");
-        } catch (error) {
-            console.error("Error in buy now:", error);
-        }
-    };
 
     return (
         <div className="mt-12">
@@ -104,7 +73,7 @@ const ProductDetails = () => {
                             <div
                                 key={index}
                                 onClick={() => setThumbnail(image)}
-                                className="border max-w-24 border-gray-500/30 rounded-xl overflow-hidden cursor-pointer"
+                                className="border max-w-24 border-gray-500/30 rounded overflow-hidden cursor-pointer"
                             >
                                 <img
                                     src={image}
@@ -114,7 +83,7 @@ const ProductDetails = () => {
                         ))}
                     </div>
 
-                    <div className="border border-gray-500/30 max-w-100 rounded-xl overflow-hidden">
+                    <div className="border border-gray-500/30 max-w-100 rounded overflow-hidden">
                         <img src={thumbnail} alt="Selected product" />
                     </div>
                 </div>
@@ -163,18 +132,57 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="flex items-center mt-10 gap-4 text-base">
-                        <button
-                            onClick={() => addToCart(specificProduct._id)}
-                            className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition"
-                        >
-                            Add to Cart
-                        </button>
+                        {!cartItems[specificProduct._id] ? (
+                            <button
+                                onClick={() => addToCart(specificProduct._id)}
+                                className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition flex items-center justify-center gap-2"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 14 14"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M.583.583h2.333l1.564 7.81a1.17 1.17 0 0 0 1.166.94h5.67a1.17 1.17 0 0 0 1.167-.94l.933-4.893H3.5m2.333 8.75a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0m6.417 0a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0"
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                                Add to Cart
+                            </button>
+                        ) : (
+                            <div className=" flex items-center justify-center gap-3 py-3.5 bg-primary-faded rounded-lg select-none">
+                                <button
+                                    onClick={() =>
+                                        removeFromCart(specificProduct._id)
+                                    }
+                                    className="cursor-pointer text-xl px-3 h-full text-black font-medium rounded transition"
+                                >
+                                    -
+                                </button>
+                                <span className="px-4 text-center text-black font-medium text-lg">
+                                    {cartItems[specificProduct._id]}
+                                </span>
+                                <button
+                                    onClick={() =>
+                                        addToCart(specificProduct._id)
+                                    }
+                                    className="cursor-pointer text-xl px-3 h-full text-black font-medium rounded transition"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        )}
+
                         <button
                             onClick={() => {
                                 addToCart(specificProduct._id);
                                 navigate("/cart");
                             }}
-                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary  hover:bg-primary-dull transition"
+                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary hover:bg-primary-faded transition"
                         >
                             Buy now
                         </button>
