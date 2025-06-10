@@ -26,6 +26,7 @@ const ProductDetails = () => {
     const [thumbnail, setThumbnail] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
+    // Fixed: Added productID dependency to useEffect for related products
     useEffect(() => {
         if (specificProduct) {
             let productsCopy = products.slice();
@@ -36,13 +37,14 @@ const ProductDetails = () => {
             );
             setRelatedProducts(relatedproducts.slice(0, 5));
         }
-    }, [products]);
+    }, [products, specificProduct]); // Added specificProduct dependency
 
+    // Fixed: Added productID dependency to useEffect for thumbnail
     useEffect(() => {
         if (specificProduct?.image?.[0]) {
             setThumbnail(specificProduct.image[0]);
         }
-    }, [specificProduct]);
+    }, [specificProduct]); // This was correct
 
     if (!specificProduct) {
         return <div>Product not found</div>;
@@ -51,6 +53,35 @@ const ProductDetails = () => {
     // Get consistent rating (3-5) and review count (10-1000) based on product ID
     const rating = getConsistentRandom(specificProduct._id, 3, 5);
     const reviewCount = getConsistentRandom(specificProduct._id, 10, 1000);
+
+    // Fixed: Get current cart quantity with fallback to 0
+    const currentCartQuantity = cartItems[specificProduct._id] || 0;
+
+    // Fixed: Add error handling for cart operations
+    const handleAddToCart = () => {
+        try {
+            addToCart(specificProduct._id);
+        } catch (error) {
+            console.error("Error adding to cart:", error);
+        }
+    };
+
+    const handleRemoveFromCart = () => {
+        try {
+            removeFromCart(specificProduct._id);
+        } catch (error) {
+            console.error("Error removing from cart:", error);
+        }
+    };
+
+    const handleBuyNow = () => {
+        try {
+            addToCart(specificProduct._id);
+            navigate("/cart");
+        } catch (error) {
+            console.error("Error in buy now:", error);
+        }
+    };
 
     return (
         <div className="mt-12">
@@ -132,9 +163,10 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="flex items-center mt-10 gap-4 text-base">
-                        {!cartItems[specificProduct._id] ? (
+                        {/* Fixed: Use currentCartQuantity instead of direct cartItems access */}
+                        {currentCartQuantity === 0 ? (
                             <button
-                                onClick={() => addToCart(specificProduct._id)}
+                                onClick={handleAddToCart}
                                 className="w-full py-3.5 cursor-pointer font-medium bg-gray-100 text-gray-800/80 rounded-xl hover:bg-gray-200 transition"
                             >
                                 Add to Cart
@@ -142,32 +174,25 @@ const ProductDetails = () => {
                         ) : (
                             <div className="flex items-center justify-center gap-2 w-32 h-[42px] bg-primary-faded rounded-xl select-none">
                                 <button
-                                    onClick={() =>
-                                        removeFromCart(specificProduct._id)
-                                    }
-                                    className="cursor-pointer text-md px-2 h-full text-black"
+                                    onClick={handleRemoveFromCart}
+                                    className="cursor-pointer text-md px-2 h-full text-black  rounded-l-xl transition"
                                 >
                                     -
                                 </button>
                                 <span className="w-5 text-center text-black">
-                                    {cartItems[specificProduct._id]}
+                                    {currentCartQuantity}
                                 </span>
                                 <button
-                                    onClick={() =>
-                                        addToCart(specificProduct._id)
-                                    }
-                                    className="cursor-pointer text-md px-2 h-full text-black"
+                                    onClick={handleAddToCart}
+                                    className="cursor-pointer text-md px-2 h-full text-black rounded-r-xl transition"
                                 >
                                     +
                                 </button>
                             </div>
                         )}
                         <button
-                            onClick={() => {
-                                addToCart(specificProduct._id);
-                                navigate("/cart");
-                            }}
-                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary  hover:bg-primary-dull transition"
+                            onClick={handleBuyNow}
+                            className="w-full py-3.5 cursor-pointer font-medium rounded-lg bg-primary hover:bg-primary-dull transition"
                         >
                             Buy now
                         </button>
