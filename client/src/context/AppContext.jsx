@@ -81,9 +81,18 @@ export const AppContextProvider = ({ children }) => {
             if (data.success) {
                 toast.success("Added to cart");
             } else {
+                // Revert cart state if update fails
+                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
+            // Revert cart state if update fails
+            setCartItems(structuredClone(cartItems));
+            if (error.response?.status === 401) {
+                setUser(null);
+                setCartItems({});
+                setShowUserLogin(true);
+            }
             toast.error(error.message);
         }
     };
@@ -91,6 +100,10 @@ export const AppContextProvider = ({ children }) => {
     //Update cart item quantity
     const updateCartItem = async (itemId, quantity) => {
         try {
+            if (!user) {
+                setShowUserLogin(true);
+                return;
+            }
             let cartData = structuredClone(cartItems);
             cartData[itemId] = quantity;
             setCartItems(cartData);
@@ -104,9 +117,18 @@ export const AppContextProvider = ({ children }) => {
             if (data.success) {
                 toast.success("Cart updated");
             } else {
+                // Revert cart state if update fails
+                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
+            // Revert cart state if update fails
+            setCartItems(structuredClone(cartItems));
+            if (error.response?.status === 401) {
+                setUser(null);
+                setCartItems({});
+                setShowUserLogin(true);
+            }
             toast.error(error.message);
         }
     };
@@ -114,6 +136,10 @@ export const AppContextProvider = ({ children }) => {
     //remove product from cart
     const removeFromCart = async (itemId) => {
         try {
+            if (!user) {
+                setShowUserLogin(true);
+                return;
+            }
             let cartData = structuredClone(cartItems);
             if (cartData[itemId]) {
                 cartData[itemId] -= 1;
@@ -133,9 +159,18 @@ export const AppContextProvider = ({ children }) => {
             if (data.success) {
                 toast.success("Removed from cart");
             } else {
+                // Revert cart state if update fails
+                setCartItems(structuredClone(cartItems));
                 toast.error(data.message);
             }
         } catch (error) {
+            // Revert cart state if update fails
+            setCartItems(structuredClone(cartItems));
+            if (error.response?.status === 401) {
+                setUser(null);
+                setCartItems({});
+                setShowUserLogin(true);
+            }
             toast.error(error.message);
         }
     };

@@ -16,6 +16,7 @@ export const Navbar = () => {
         searchQuery,
         getCartCount,
         axios,
+        setCartItems,
     } = useAppContext();
 
     const logout = async () => {
@@ -24,15 +25,17 @@ export const Navbar = () => {
             if (data.success) {
                 toast.success(data.message);
                 setUser(null);
+                setCartItems({});
                 navigate("/");
             } else {
                 toast.error(data.message);
             }
         } catch (error) {
             toast.error(error.message);
+            setUser(null);
+            setCartItems({});
+            navigate("/");
         }
-        setUser(null);
-        navigate("/");
         setOpen(false);
     };
 

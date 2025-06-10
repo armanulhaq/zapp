@@ -26,26 +26,28 @@ export const register = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            cartItems: {},
         });
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
-        }); //creates a secure token that contains the user's ID signed using your secret key
+        });
 
         res.cookie("token", token, {
-            httpOnly: true, //not accessible via JavaScript (for security).
-            secure: true, //always use secure in production
-            sameSite: "none", //allow cross-site cookies
-            maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
-            path: "/", //ensure cookie is available for all paths
-            domain:
-                process.env.NODE_ENV === "production"
-                    ? ".vercel.app"
-                    : undefined, //set domain in production
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            path: "/",
         });
-        //This token is used to authenticate the user later without asking them to log in again.
+
         return res.json({
             success: true,
-            user: { email: user.email, name: user.name },
+            user: {
+                _id: user._id,
+                email: user.email,
+                name: user.name,
+                cartItems: user.cartItems,
+            },
             message: "User successfully created",
         });
     } catch (error) {

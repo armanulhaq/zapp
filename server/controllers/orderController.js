@@ -6,7 +6,9 @@ import User from "../models/user.js";
 //Place order by COD: api/order/cod
 export const placeOrderByCOD = async (req, res) => {
     try {
-        const { userId, items, address } = req.body;
+        const { items, address } = req.body;
+        const userId = req.userId;
+
         if (!address || items.length === 0) {
             return res.json({ success: false, message: "Invalid data" });
         }
@@ -19,16 +21,21 @@ export const placeOrderByCOD = async (req, res) => {
 
         //Add tax charge (2%)
         amount += Math.floor(amount * 0.02);
-        await Order.create({
+
+        const order = await Order.create({
             userId,
             items,
             amount,
             address,
             paymentType: "COD",
         });
+
+        // Clear user's cart after successful order
+        await User.findByIdAndUpdate(userId, { cartItems: {} });
+
         return res.json({
             success: true,
-            message: "Order placed successfuly!",
+            message: "Order placed successfully!",
         });
     } catch (error) {
         res.json({ success: false, message: error.message });
@@ -37,7 +44,8 @@ export const placeOrderByCOD = async (req, res) => {
 
 export const placeOrderStripe = async (req, res) => {
     try {
-        const { userId, items, address } = req.body;
+        const { items, address } = req.body;
+        const userId = req.userId;
         const { origin } = req.headers;
 
         if (!address || items.length === 0) {
