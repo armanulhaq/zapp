@@ -3,7 +3,8 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 export const ProductCard = ({ product }) => {
-    const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
+    const { addToCart, removeFromCart, cartItems, navigate, isAuthenticated } =
+        useAppContext();
     const [optimisticQuantity, setOptimisticQuantity] = useState(null);
 
     // Generate consistent random numbers based on product ID
@@ -39,17 +40,28 @@ export const ProductCard = ({ product }) => {
         }
     }, [actualCartQuantity, optimisticQuantity]);
 
+    // Reset optimistic state when user logs out
+    useEffect(() => {
+        if (!isAuthenticated && optimisticQuantity !== null) {
+            setOptimisticQuantity(null);
+        }
+    }, [isAuthenticated, optimisticQuantity]);
+
     // Event handlers with optimistic updates
     const handleAddToCart = (e) => {
         e.stopPropagation();
         e.preventDefault();
         try {
-            // Optimistic update - immediately show the new quantity
-            const newQuantity = currentCartQuantity + 1;
-            setOptimisticQuantity(newQuantity);
-
             if (addToCart && product._id) {
-                addToCart(product._id);
+                // Call addToCart first - it will handle auth check and show login if needed
+                const result = addToCart(product._id);
+
+                // Only apply optimistic update if user is authenticated
+                // You can also check the result of addToCart if it returns a promise/boolean
+                if (isAuthenticated) {
+                    const newQuantity = currentCartQuantity + 1;
+                    setOptimisticQuantity(newQuantity);
+                }
             }
         } catch (error) {
             console.error("Error adding to cart:", error);
@@ -62,12 +74,15 @@ export const ProductCard = ({ product }) => {
         e.stopPropagation();
         e.preventDefault();
         try {
-            // Optimistic update - immediately show the new quantity
-            const newQuantity = Math.max(0, currentCartQuantity - 1);
-            setOptimisticQuantity(newQuantity);
-
             if (removeFromCart && product._id) {
-                removeFromCart(product._id);
+                // Call removeFromCart first
+                const result = removeFromCart(product._id);
+
+                // Only apply optimistic update if user is authenticated
+                if (isAuthenticated) {
+                    const newQuantity = Math.max(0, currentCartQuantity - 1);
+                    setOptimisticQuantity(newQuantity);
+                }
             }
         } catch (error) {
             console.error("Error removing from cart:", error);
