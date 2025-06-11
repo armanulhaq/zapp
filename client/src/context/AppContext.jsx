@@ -24,15 +24,22 @@ export const AppContextProvider = ({ children }) => {
 
     const fetchSellerStatus = async () => {
         try {
-            const { data } = await axios.get("/api/seller/is-auth"); //when this route is hit with post request, middleware runs and authenticates and then controller runs and gives data
+            const { data } = await axios.get("/api/seller/is-auth");
             if (data.success) {
                 setIsSeller(true);
             } else {
                 setIsSeller(false);
+                // If on seller route but not authenticated, redirect to seller login
+                if (location.pathname.includes("/seller")) {
+                    navigate("/seller");
+                }
             }
         } catch (error) {
-            toast.error(error.message);
             setIsSeller(false);
+            // If on seller route but not authenticated, redirect to seller login
+            if (location.pathname.includes("/seller")) {
+                navigate("/seller");
+            }
         }
     };
 
@@ -314,6 +321,22 @@ export const AppContextProvider = ({ children }) => {
             // Clean up when component unmounts
             window.removeEventListener("popstate", handlePopState);
         };
+    }, [user]);
+
+    // Add effect to check seller status on mount and route changes
+    useEffect(() => {
+        if (location.pathname.includes("/seller")) {
+            fetchSellerStatus();
+        }
+    }, [location.pathname]);
+
+    // Add effect to check seller status when user changes
+    useEffect(() => {
+        if (user) {
+            fetchSellerStatus();
+        } else {
+            setIsSeller(false);
+        }
     }, [user]);
 
     //Step3: put all the states that are needed in a single object

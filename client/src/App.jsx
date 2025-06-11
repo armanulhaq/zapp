@@ -56,10 +56,20 @@ function App() {
                     >
                         <Route
                             index
-                            element={isSeller ? <AddProduct /> : null}
+                            element={
+                                !isSeller ? <SellerLogin /> : <AddProduct />
+                            }
                         />
-                        <Route path="your-products" element={<ProductList />} />
-                        <Route path="orders" element={<Orders />} />
+                        <Route
+                            path="your-products"
+                            element={
+                                !isSeller ? <SellerLogin /> : <ProductList />
+                            }
+                        />
+                        <Route
+                            path="orders"
+                            element={!isSeller ? <SellerLogin /> : <Orders />}
+                        />
                     </Route>
                 </Routes>
             </div>

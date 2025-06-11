@@ -1,10 +1,18 @@
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const SellerLayout = () => {
-    const { axios, navigate, setIsSeller } = useAppContext();
+    const { axios, navigate, setIsSeller, isSeller } = useAppContext();
+
+    useEffect(() => {
+        // If not authenticated, redirect to seller login
+        if (!isSeller) {
+            navigate("/seller");
+        }
+    }, [isSeller]);
 
     const sidebarLinks = [
         { name: "Add new product", path: "/seller", icon: assets.add_icon },
@@ -18,7 +26,7 @@ const SellerLayout = () => {
 
     const logout = async () => {
         try {
-            const { data } = await axios.post("/api/seller/logout");
+            const { data } = await axios.get("/api/seller/logout");
             if (data.success) {
                 setIsSeller(false);
                 toast.success(data.message);
@@ -28,8 +36,15 @@ const SellerLayout = () => {
             }
         } catch (error) {
             toast.error(error.message);
+            setIsSeller(false);
+            navigate("/");
         }
     };
+
+    // If not authenticated, don't render the layout
+    if (!isSeller) {
+        return null;
+    }
 
     return (
         <div className="text-default min-h-screen text-gray-700 bg-white">

@@ -114,7 +114,7 @@ export const ProductCard = ({ product }) => {
                                 currentCartQuantity > 0
                                     ? "bg-red-100 text-red-400"
                                     : "bg-primary-faded border border-primary"
-                            } md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-primary/20 transition-all duration-200 active:scale-95`}
+                            } md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-gray-200 transition-all duration-200 active:scale-95`}
                             onClick={handleAddToCart}
                             aria-label={`${
                                 currentCartQuantity > 0 ? "Remove" : "Add"
