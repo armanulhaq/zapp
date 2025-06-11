@@ -7,20 +7,21 @@ import User from "../models/user.js";
 export const placeOrderByCOD = async (req, res) => {
     try {
         const { items, address } = req.body;
-        const userId = req.userId;
+        const userId = req.userId; //from authUser
 
         if (!address || items.length === 0) {
             return res.json({ success: false, message: "Invalid data" });
         }
 
-        //Calculate amount using items
-        let amount = await items.reduce(async (acc, item) => {
+        // Calculate total amount
+        let amount = 0;
+        for (const item of items) {
             const product = await Product.findById(item.product);
-            return (await acc) + product.offerPrice * item.quantity;
-        }, 0);
+            amount += product.offerPrice * item.quantity;
+        }
 
-        //Add tax charge (2%)
-        amount += Math.floor(amount * 0.02);
+        //Add tax charge (7%)
+        amount += Math.floor(amount * 0.07);
 
         const order = await Order.create({
             userId,
@@ -54,16 +55,17 @@ export const placeOrderStripe = async (req, res) => {
 
         let productData = [];
 
-        //Calculate amount using items
-        let amount = await items.reduce(async (acc, item) => {
+        // Calculate total amount
+        let amount = 0;
+        for (const item of items) {
             const product = await Product.findById(item.product);
             productData.push({
                 name: product.name,
                 price: product.offerPrice,
                 quantity: item.quantity,
             });
-            return (await acc) + product.offerPrice * item.quantity;
-        }, 0);
+            amount += product.offerPrice * item.quantity;
+        }
 
         //Add tax charge (7%)
         amount += Math.floor(amount * 0.07);
@@ -80,8 +82,8 @@ export const placeOrderStripe = async (req, res) => {
         const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
         //create line items for stripe
         const lineItems = productData.map((item) => {
-            // Convert INR to USD by dividing by 88
-            const priceInUSD = (item.price + item.price * 0.07) / 87;
+            // Convert INR to USD by dividing by 87
+            const priceInUSD = (item.price + item.price * 0.07) / 87; //inr to usd
             return {
                 price_data: {
                     currency: "usd",
@@ -181,9 +183,9 @@ export const getUserOrders = async (req, res) => {
         const userId = req.userId;
         const orders = await Order.find({
             userId,
-            $or: [{ paymentType: "COD" }, { isPaid: true }],
+            $or: [{ paymentType: "COD" }, { isPaid: true }], //// Match EITHER of these conditions:
         })
-            .populate("items.product address")
+            .populate("items.product") //// Get full product and address details
             .sort({ createdAt: -1 });
         res.json({ success: true, orders });
     } catch (error) {

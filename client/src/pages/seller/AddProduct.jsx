@@ -24,12 +24,30 @@ const AddProduct = () => {
                 price,
                 offerPrice,
             };
+            // Sample productData looks like this{
+            //     name: "Nike Air Max",
+            //     description: "Comfortable running shoes\nPerfect for daily use\nAvailable in multiple colors",
+            //     category: "shoes",
+            //     price: "12999",
+            //     offerPrice: "9999"
+            //
+            // };
+
             const formData = new FormData(); //built in object that gives various methods
-            formData.append("productData", JSON.stringify(productData));
+            formData.append("productData", JSON.stringify(productData)); // we are adding an object with key productData and value stringified version of productData
+
             for (let index = 0; index < files.length; index++) {
                 formData.append("images", files[index]);
+                //     {
+                //         "productData": '{"name":"Nike Air Max",...}',  //string
+                //         "images": [File1],  // first image
+                //         "images": [File2],  // second image
+                //         "images": [File3]   // third image
+                //     }
             }
+
             const { data } = await axios.post("/api/product/add", formData);
+
             if (data.success) {
                 toast.success(data.message);
                 //set all fields empty after post
@@ -106,7 +124,7 @@ const AddProduct = () => {
                         id="product-name"
                         type="text"
                         placeholder="Type here"
-                        className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                        className="outline-none md:py-2.5 py-2 px-3 rounded-lg border border-gray-500/40"
                         required
                     />
                 </div>
@@ -124,7 +142,7 @@ const AddProduct = () => {
                         value={description}
                         id="product-description"
                         rows={4}
-                        className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+                        className="outline-none md:py-2.5 py-2 px-3 rounded-lg border border-gray-500/40 resize-none"
                         placeholder="Type here"
                     ></textarea>
                 </div>
@@ -137,7 +155,7 @@ const AddProduct = () => {
                             setCategory(e.target.value);
                         }}
                         id="category"
-                        className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                        className="outline-none md:py-2.5 py-2 px-3 rounded-lg border border-gray-500/40"
                     >
                         <option value="">Select Category</option>
                         {categories.map((item, index) => (
@@ -163,7 +181,7 @@ const AddProduct = () => {
                             id="product-price"
                             type="number"
                             placeholder="0"
-                            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                            className="outline-none md:py-2.5 py-2 px-3 rounded-lg border border-gray-500/40"
                             required
                         />
                     </div>
@@ -182,7 +200,7 @@ const AddProduct = () => {
                             id="offer-price"
                             type="number"
                             placeholder="0"
-                            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                            className="outline-none md:py-2.5 py-2 px-3 rounded-lg border border-gray-500/40"
                             required
                         />
                     </div>

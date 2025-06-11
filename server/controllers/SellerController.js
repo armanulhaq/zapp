@@ -10,9 +10,10 @@ export const sellerLogin = async (req, res) => {
             const token = jwt.sign({ email }, process.env.JWT_SECRET, {
                 expiresIn: "7d",
             });
+
             res.cookie("sellerToken", token, {
                 httpOnly: true, //not accessible via JavaScript (for security).
-                secure: process.env.NODE_ENV === "production", //when true cookie will be sent only over https
+                secure: process.env.NODE_ENV === "production", //when true (production) cookie will be sent only over https
                 sameSite:
                     process.env.NODE_ENV === "production" ? "none" : "strict", //Only sends the cookie if the request is from the same site if strict. none Allows cross-site cookies
                 maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiration time
@@ -31,6 +32,7 @@ export const sellerLogin = async (req, res) => {
 };
 //Seller is authenticated: api/seller/is-auth
 export const isSellerAuth = async (req, res) => {
+    //no need to check if user is in db, as there is only one seller and he passed the criteria
     try {
         return res.json({ success: true });
     } catch (error) {

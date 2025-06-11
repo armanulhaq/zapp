@@ -12,7 +12,7 @@ export const register = async (req, res) => {
                 message: "Please fill all the details.",
             });
         }
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email }); //MongoDB queries need an object with field names
 
         if (existingUser) {
             return res.json({
@@ -28,16 +28,17 @@ export const register = async (req, res) => {
             password: hashedPassword,
             cartItems: {},
         });
+
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "7d",
         });
 
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            httpOnly: true, //Prevents JavaScript from accessing the cookie (security)
+            secure: process.env.NODE_ENV === "production", //Cookie only sent over HTTPS in production
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //when none,Cookie can be sent when your frontend and backend are on different domains,when production, strict,Cookie only works when frontend and backend are on the same domain
             maxAge: 7 * 24 * 60 * 60 * 1000,
-            path: "/",
+            path: "/", //Cookie is available across all paths on the domain
         });
 
         return res.json({
@@ -65,13 +66,16 @@ export const login = async (req, res) => {
                 message: "Please fill all the details.",
             });
         }
+
         const user = await User.findOne({ email });
+
         if (!user) {
             return res.json({
                 success: false,
                 message: "Invalid email or password",
             });
         }
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -103,9 +107,12 @@ export const login = async (req, res) => {
 export const isAuth = async (req, res) => {
     //authUser middleware extracts the userId from cookie and sends back info to this
     try {
-        const user = await User.findById(req.userId).select("-password");
+        const user = await User.findById(req.userId).select("-password"); //req.userId is prepared by authUser middleware after authenticating user
         if (!user) {
-            return res.json({ success: false, message: "User not found" });
+            return res.json({
+                success: false,
+                message: "To access this feature please login",
+            });
         }
         return res.json({ success: true, user });
     } catch (error) {
@@ -120,7 +127,7 @@ export const logout = async (req, res) => {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "strict", //We need to match exactly how the cookie was set to successfully delete it
         });
         return res.json({ success: true, message: "Successfully logged out!" });
     } catch (error) {

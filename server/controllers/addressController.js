@@ -15,7 +15,7 @@ export const addAddress = async (req, res) => {
             phone,
         } = req.body;
 
-        const userId = req.userId;
+        const userId = req.userId; //from middleware
 
         const address = await Address.create({
             firstName,

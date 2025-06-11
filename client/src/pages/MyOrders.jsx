@@ -7,6 +7,7 @@ const MyOrders = () => {
     const [myOrders, setMyOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const { axios, user } = useAppContext();
+
     const fetchMyOrders = async () => {
         try {
             setLoading(true);
@@ -29,7 +30,7 @@ const MyOrders = () => {
     }, [user]);
 
     if (loading) {
-        return <Loader />;
+        return <Loader context="userOrders" />;
     }
 
     return (

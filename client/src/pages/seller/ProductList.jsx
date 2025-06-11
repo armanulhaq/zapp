@@ -1,15 +1,33 @@
 import { useAppContext } from "../../context/AppContext";
+import { toast } from "react-hot-toast";
 
 const ProductList = () => {
     const { products, axios, fetchProducts } = useAppContext();
 
     const toggleStock = async (id, inStock) => {
-        await axios.post("/api/product/stock", {
-            id,
-            inStock,
-        });
+        const originalProducts = products;
+        // Optimistically update the UI
+        const updatedProducts = products.map((product) =>
+            //When switch is clicked, we create a new array where we change just one product
+            product._id === id ? { ...product, inStock } : product
+        );
+        fetchProducts(updatedProducts); //calling fetchProducts with optimistic products so it wont go to db and thus the change will look immediate
 
-        fetchProducts();
+        try {
+            // Then update the backend
+            await axios.post("/api/product/stock", {
+                id,
+                inStock,
+            });
+            // Refresh products after successful update
+            fetchProducts();
+        } catch (error) {
+            // If there's an error, revert the UI
+            fetchProducts(originalProducts);
+            toast.error(
+                error.response?.data?.message || "Failed to update stock status"
+            );
+        }
     };
 
     return (

@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "dotenv/config"; //It loads environment variables from a .env
 import cookieParser from "cookie-parser"; //Lets you read cookies sent by the client
 import express, { application } from "express";
 import cors from "cors"; //Helps your backend allow requests from a different frontend (e.g., frontend on port 5173)
@@ -17,29 +17,32 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 await connectDB();
+
 const allowedOrigins = [
     "http://localhost:5173",
     "https://zapp-lime.vercel.app",
 ];
 
-app.post("/stripe", express.raw({ type: "application/json" }), stripeWebHooks);
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebHooks); //it's used to handle payment events from Stripe (like successful payments, failed payments,
+//express.raw() ensures the request body is received as raw data (required for Stripe webhooks), stripeWebHooks is the function that processes the webhook events
 
 //Middleware configuration
-app.use(express.json()); //It tells your Express app to automatically parse any incoming request that has a Content-Type of application/json.
+app.use(express.json());
 //express.json(): This is built-in middleware in Express that parses JSON request bodies and makes the data available on req.body.
 
-app.use(cookieParser());
+app.use(cookieParser()); //It adds middleware to parse cookies from incoming requests, making them available in req.cookies.
+
 app.use(
     cors({
         origin: allowedOrigins,
-        credentials: true,
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true, //Without this, your frontend can't send things like login tokens or session cookies to your backend
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], //Specifies which HTTP methods are allowed
+        allowedHeaders: ["Content-Type", "Authorization"], //Defines which headers can be used in requests
     })
 );
 
 app.get("/", (req, res) => {
-    res.send("HIIIII");
+    res.send("Our server is running...");
 });
 
 app.use("/api/user", userRoute);

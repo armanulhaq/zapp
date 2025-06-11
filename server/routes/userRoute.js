@@ -23,5 +23,4 @@ export default userRouter;
 // These are PUBLIC routes and anyone should be able to access them
 // If we put authUser here, it would create a paradox:
 // "You need to be logged in to log in"
-// Logout Route (NEEDS middleware) as this is a PROTECTED route
-// Only logged-in users should be able to logout
+// Logout Route (NEEDS middleware) as this is a PROTECTED route. Only logged-in users should be able to logout

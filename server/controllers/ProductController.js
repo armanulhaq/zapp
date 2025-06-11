@@ -3,6 +3,7 @@ import cloudinary from "../configs/cloudinary.js";
 
 //Add Product: api/product/add
 function uploadBufferToCloudinary(buffer) {
+    //we have an image in memory (buffer)
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
             { resource_type: "image" },
@@ -17,15 +18,17 @@ function uploadBufferToCloudinary(buffer) {
 
 export const addProduct = async (req, res) => {
     try {
-        let productData = JSON.parse(req.body.productData);
-        const images = req.files;
+        let productData = JSON.parse(req.body.productData); //turning back string into JSON
+        const images = req.files; //put here by multer
 
+        //Upload each image to Cloudinary and get URLs
         let imagesURL = await Promise.all(
             images.map(async (image) => {
                 const result = await uploadBufferToCloudinary(image.buffer);
                 return result.secure_url;
             })
         );
+        // imagesURL is now an array of URLs
 
         await Product.create({
             ...productData,
@@ -38,6 +41,7 @@ export const addProduct = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 };
+
 //Get Product: api/product/list
 export const productList = async (req, res) => {
     try {

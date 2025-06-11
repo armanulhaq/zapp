@@ -9,7 +9,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL; //"This is where my s
 export const AppContext = createContext(); //1. Step1: Create a context
 
 export const AppContextProvider = ({ children }) => {
-    const currency = import.meta.VITE_CURRENCY;
+    //It is wrapped around App so children is app
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,10 +20,11 @@ export const AppContextProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
     const [forceRefresh, setForceRefresh] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const fetchSellerStatus = async () => {
         try {
-            const { data } = await axios.get("/api/seller/is-auth");
+            const { data } = await axios.get("/api/seller/is-auth"); //when this route is hit with post request, middleware runs and authenticates and then controller runs and gives data
             if (data.success) {
                 setIsSeller(true);
             } else {
@@ -34,6 +35,7 @@ export const AppContextProvider = ({ children }) => {
             setIsSeller(false);
         }
     };
+
     //fetch user auth status and user data and cart items
     const fetchUser = async () => {
         try {
@@ -46,13 +48,23 @@ export const AppContextProvider = ({ children }) => {
                 setCartItems({});
             }
         } catch (error) {
+            console.error("Error fetching user:", error.message);
             setUser(null);
             setCartItems({});
+            // Only show error toast if it's not a 401 (unauthorized) error
+            if (error.response?.status !== 401) {
+                toast.error("Failed to fetch user data");
+            }
         }
     };
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (optimisticProducts) => {
         try {
+            if (optimisticProducts) {
+                setProducts(optimisticProducts);
+                return;
+            }
+            setLoading(true);
             const { data } = await axios.get("/api/product/list");
             if (data.success) {
                 setProducts(data.products);
@@ -61,9 +73,12 @@ export const AppContextProvider = ({ children }) => {
             }
         } catch (error) {
             toast.error(error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
+    //Frontend function that updates the state and sends it via post request to the the backend which is then catched by updateCart controller to update the DB
     const addToCart = async (itemId) => {
         try {
             if (!user) {
@@ -71,21 +86,20 @@ export const AppContextProvider = ({ children }) => {
                 return;
             }
 
-            // Update local state immediately for better UX
-            let cartData = structuredClone(cartItems);
-            if (cartData[itemId]) {
-                cartData[itemId] += 1;
-            } else {
-                cartData[itemId] = 1;
-            }
-            setCartItems(cartData);
+            setCartItems((prevCart) => {
+                const updated = { ...prevCart };
+                updated[itemId] = (updated[itemId] || 0) + 1; //if already exists add 1 to that otherwise 1 to 0
+                return updated;
+            });
 
             // Then sync with backend
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
-                cartItems: cartData,
+                cartItems: {
+                    ...cartItems,
+                    [itemId]: (cartItems[itemId] || 0) + 1,
+                },
             });
-
             if (!data.success) {
                 // Revert local state if backend update fails
                 setCartItems(cartItems);
@@ -105,15 +119,17 @@ export const AppContextProvider = ({ children }) => {
         }
     };
 
-    //Update cart item quantity
+    //Updates the Cart: used in the cart page's select
     const updateCartItem = async (itemId, quantity) => {
+        //id and quantity comes from frontend
         try {
             if (!user) {
                 setShowUserLogin(true);
                 return;
             }
+
             let cartData = structuredClone(cartItems);
-            cartData[itemId] = quantity;
+            cartData[itemId] = quantity; //update the quantity of the cartItem with this itemId
 
             // Update cart in backend first
             const { data } = await axios.post("/api/cart/update", {
@@ -146,6 +162,7 @@ export const AppContextProvider = ({ children }) => {
                 return;
             }
             let cartData = structuredClone(cartItems);
+
             if (cartData[itemId]) {
                 cartData[itemId] -= 1;
                 if (cartData[itemId] === 0) {
@@ -179,7 +196,6 @@ export const AppContextProvider = ({ children }) => {
     //calculate total cart items
     const getCartCount = () => {
         let totalCount = Object.keys(cartItems).length;
-
         return totalCount;
     };
 
@@ -219,7 +235,10 @@ export const AppContextProvider = ({ children }) => {
         fetchProducts();
 
         // Set up periodic auth check
-        const authCheckInterval = setInterval(fetchUser, 5 * 60 * 1000); // Check every 5 minutes
+        const authCheckInterval = setInterval(() => {
+            fetchUser();
+            fetchSellerStatus();
+        }, 5 * 60 * 1000); // Check every 5 minutes
 
         // Clean up interval on unmount
         return () => clearInterval(authCheckInterval);
@@ -229,6 +248,7 @@ export const AppContextProvider = ({ children }) => {
     useEffect(() => {
         const handleFocus = () => {
             fetchUser();
+            fetchSellerStatus();
         };
 
         window.addEventListener("focus", handleFocus);
@@ -259,6 +279,9 @@ export const AppContextProvider = ({ children }) => {
     // Add visibility change handler to refresh cart when returning to the tab
     useEffect(() => {
         const handleVisibilityChange = () => {
+            // document.visibilityState can be:
+            // "visible" - tab is active
+            // "hidden" - tab is not active
             if (document.visibilityState === "visible") {
                 refreshCartData(true);
             }
@@ -278,9 +301,10 @@ export const AppContextProvider = ({ children }) => {
         const handlePopState = () => {
             refreshCartData(true);
         };
-
+        // Add event listener for browser back/forward
         window.addEventListener("popstate", handlePopState);
         return () => {
+            // Clean up when component unmounts
             window.removeEventListener("popstate", handlePopState);
         };
     }, [user]);
@@ -295,7 +319,6 @@ export const AppContextProvider = ({ children }) => {
         showUserLogin,
         setShowUserLogin,
         products,
-        currency,
         addToCart,
         updateCartItem,
         removeFromCart,
@@ -309,9 +332,10 @@ export const AppContextProvider = ({ children }) => {
         setCartItems,
         refreshCartData,
         forceRefresh,
+        loading,
     };
 
-    //. Step4: Provide the context value to the children {app.jsx}
+    //. Step4: Provide the context value to the children {App.jsx}
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
 

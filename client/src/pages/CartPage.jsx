@@ -36,7 +36,7 @@ const CartPage = () => {
     useEffect(() => {
         if (paymentCanceled === "true") {
             toast.error(
-                "Payment was canceled. Your cart items are still available."
+                "Payment was cancelled. Your cart items are still available."
             );
             refreshCartData(true);
         }

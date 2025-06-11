@@ -17,7 +17,7 @@ import SellerLayout from "./pages/seller/SellerLayout";
 import AddProduct from "./pages/seller/AddProduct";
 import ProductList from "./pages/seller/ProductList";
 import Orders from "./pages/seller/Orders";
-import Loader from "./components/Loader";
+import LoaderPage from "./pages/Loader";
 
 function App() {
     const isSellerPath = useLocation().pathname.includes("seller");
@@ -32,7 +32,7 @@ function App() {
                 className={`flex-1 ${
                     isSellerPath
                         ? ""
-                        : "px-6 md:px-16 lg:px-24 flex justify-center items-center xl:px-32"
+                        : "flex-1 max-w-7xl mx-auto px-3 sm:px-6 w-full"
                 }`}
             >
                 <Routes>
@@ -49,7 +49,7 @@ function App() {
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="/add-address" element={<AddAddresses />} />
                     <Route path="/my-orders" element={<MyOrders />} />
-                    <Route path="/loader" element={<Loader />} />
+                    <Route path="/loader" element={<LoaderPage />} />
                     <Route
                         path="/seller"
                         element={!isSeller ? <SellerLogin /> : <SellerLayout />}

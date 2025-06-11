@@ -1,72 +1,34 @@
-import { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 export const ProductCard = ({ product }) => {
-    const { addToCart, removeFromCart, cartItems, navigate, isAuthenticated } =
-        useAppContext();
-    const [optimisticQuantity, setOptimisticQuantity] = useState(null);
+    const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
 
-    // Generate consistent random numbers based on product ID
+    // Get consistent rating and review count
     const getConsistentRandom = (id, min, max) => {
-        // Use the product ID to generate a consistent number
-        const hash = id.split("").reduce((acc, char) => {
-            return char.charCodeAt(0) + ((acc << 5) - acc);
-        }, 0);
-        return (Math.abs(hash) % (max - min + 1)) + min;
+        const lastChar = id.slice(-1);
+        return (lastChar.charCodeAt(0) % (max - min + 1)) + min; //doing operations on last character of id
     };
 
-    // Early return if no product
-    if (!product || !product._id) {
-        return null;
-    }
-
-    // Get consistent rating (3-5) and review count (10-1000) based on product ID
     const rating = getConsistentRandom(product._id, 3, 5);
     const reviewCount = getConsistentRandom(product._id, 10, 1000);
 
-    // Get current cart quantity with fallback to 0
-    const actualCartQuantity = cartItems?.[product._id] || 0;
-    const currentCartQuantity =
-        optimisticQuantity !== null ? optimisticQuantity : actualCartQuantity;
+    // Get current cart quantity
+    const currentCartQuantity = cartItems?.[product._id] || 0;
 
-    // Reset optimistic state when actual state catches up
-    useEffect(() => {
-        if (
-            optimisticQuantity !== null &&
-            optimisticQuantity === actualCartQuantity
-        ) {
-            setOptimisticQuantity(null);
-        }
-    }, [actualCartQuantity, optimisticQuantity]);
+    // Early return if no product
+    if (!product || !product._id) return null;
 
-    // Reset optimistic state when user logs out
-    useEffect(() => {
-        if (!isAuthenticated && optimisticQuantity !== null) {
-            setOptimisticQuantity(null);
-        }
-    }, [isAuthenticated, optimisticQuantity]);
-
-    // Event handlers with optimistic updates
+    // Cart handlers
     const handleAddToCart = (e) => {
         e.stopPropagation();
         e.preventDefault();
         try {
             if (addToCart && product._id) {
-                // Call addToCart first - it will handle auth check and show login if needed
-                const result = addToCart(product._id);
-
-                // Only apply optimistic update if user is authenticated
-                // You can also check the result of addToCart if it returns a promise/boolean
-                if (isAuthenticated) {
-                    const newQuantity = currentCartQuantity + 1;
-                    setOptimisticQuantity(newQuantity);
-                }
+                addToCart(product._id);
             }
         } catch (error) {
             console.error("Error adding to cart:", error);
-            // Reset optimistic state on error
-            setOptimisticQuantity(null);
         }
     };
 
@@ -75,19 +37,10 @@ export const ProductCard = ({ product }) => {
         e.preventDefault();
         try {
             if (removeFromCart && product._id) {
-                // Call removeFromCart first
-                const result = removeFromCart(product._id);
-
-                // Only apply optimistic update if user is authenticated
-                if (isAuthenticated) {
-                    const newQuantity = Math.max(0, currentCartQuantity - 1);
-                    setOptimisticQuantity(newQuantity);
-                }
+                removeFromCart(product._id);
             }
         } catch (error) {
             console.error("Error removing from cart:", error);
-            // Reset optimistic state on error
-            setOptimisticQuantity(null);
         }
     };
 
@@ -107,24 +60,28 @@ export const ProductCard = ({ product }) => {
     return (
         <div
             onClick={handleCardClick}
-            className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-5 w-full cursor-pointer hover:shadow-md transition-shadow"
+            className="border border-gray-500/20 rounded-lg md:px-4 px-3 py-5 w-full cursor-pointer hover:shadow-md transition-all duration-300"
         >
+            {/* Product Image */}
             <div className="group flex items-center justify-center p-2">
                 <img
                     className="group-hover:scale-105 transition-transform duration-300 max-w-26 md:max-w-36 rounded-lg"
                     src={product.image?.[0] || "/placeholder-image.jpg"}
                     alt={product.name || "Product image"}
                     onError={(e) => {
-                        e.target.src = "/placeholder-image.jpg";
+                        e.target.src = "/placeholder_image.png";
                     }}
                 />
             </div>
 
+            {/* Product Info */}
             <div className="text-gray-500/60 text-sm">
+                {/* Category */}
                 <p className="bg-primary-faded rounded-full w-fit px-2 py-0.5 my-2 border border-primary text-xs">
                     {product.category}
                 </p>
 
+                {/* Product Name */}
                 <p
                     className="text-gray-700 font-medium text-lg truncate w-full"
                     title={product.name}
@@ -132,6 +89,7 @@ export const ProductCard = ({ product }) => {
                     {product.name}
                 </p>
 
+                {/* Rating */}
                 <div className="flex items-center gap-0.5 mb-2">
                     {Array(5)
                         .fill("")
@@ -150,7 +108,9 @@ export const ProductCard = ({ product }) => {
                     <p className="text-xs ml-1">({reviewCount})</p>
                 </div>
 
+                {/* Price and Cart */}
                 <div className="flex items-end justify-between mt-3">
+                    {/* Price */}
                     <div className="flex flex-col">
                         <p className="md:text-xl text-base font-medium text-black">
                             ₹{product.offerPrice}
@@ -162,10 +122,11 @@ export const ProductCard = ({ product }) => {
                         )}
                     </div>
 
+                    {/* Cart Button */}
                     <div className="text-primary">
                         {currentCartQuantity === 0 ? (
                             <button
-                                className="flex items-center justify-center gap-1 text-black bg-primary-faded border border-primary md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-primary/20 transition-colors duration-200 active:scale-95"
+                                className="flex items-center justify-center gap-1 text-black bg-primary-faded border border-primary md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-primary/20 transition-all duration-200 active:scale-95"
                                 onClick={handleAddToCart}
                                 aria-label={`Add ${product.name} to cart`}
                             >
@@ -191,7 +152,7 @@ export const ProductCard = ({ product }) => {
                             <div className="flex items-center justify-center gap-1 md:w-20 w-16 h-[34px] bg-primary rounded select-none">
                                 <button
                                     onClick={handleRemoveFromCart}
-                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-l transition-colors duration-200 active:scale-95 flex items-center justify-center"
+                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-l transition-all duration-200 active:scale-95 flex items-center justify-center"
                                     aria-label={`Remove one ${product.name} from cart`}
                                     disabled={currentCartQuantity <= 0}
                                 >
@@ -200,13 +161,12 @@ export const ProductCard = ({ product }) => {
                                 <span
                                     className="flex-1 text-center text-black font-medium text-sm transition-all duration-200"
                                     aria-label={`${currentCartQuantity} items in cart`}
-                                    key={currentCartQuantity} // Force re-render on quantity change
                                 >
                                     {currentCartQuantity}
                                 </span>
                                 <button
                                     onClick={handleAddToCart}
-                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-r transition-colors duration-200 active:scale-95 flex items-center justify-center"
+                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-r transition-all duration-200 active:scale-95 flex items-center justify-center"
                                     aria-label={`Add one more ${product.name} to cart`}
                                 >
                                     +
