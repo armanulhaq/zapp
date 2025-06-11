@@ -83,29 +83,37 @@ export const AppContextProvider = ({ children }) => {
         try {
             if (!user) {
                 setShowUserLogin(true);
-                return;
+                return false;
             }
 
-            setCartItems((prevCart) => {
-                const updated = { ...prevCart };
-                updated[itemId] = (updated[itemId] || 0) + 1; //if already exists add 1 to that otherwise 1 to 0
-                return updated;
-            });
+            // Create new cart state
+            const newCartItems = { ...cartItems };
+            if (newCartItems[itemId]) {
+                // If item exists in cart, remove it
+                delete newCartItems[itemId];
+            } else {
+                // If item doesn't exist, add it
+                newCartItems[itemId] = 1;
+            }
+
+            // Update local state first for immediate feedback
+            setCartItems(newCartItems);
 
             // Then sync with backend
             const { data } = await axios.post("/api/cart/update", {
                 userId: user._id,
-                cartItems: {
-                    ...cartItems,
-                    [itemId]: (cartItems[itemId] || 0) + 1,
-                },
+                cartItems: newCartItems,
             });
             if (!data.success) {
                 // Revert local state if backend update fails
                 setCartItems(cartItems);
                 toast.error(data.message);
+                return false;
             } else {
-                toast.success("Added to cart");
+                toast.success(
+                    cartItems[itemId] ? "Removed from cart" : "Added to cart."
+                );
+                return true;
             }
         } catch (error) {
             // Revert local state if API call fails
@@ -116,6 +124,7 @@ export const AppContextProvider = ({ children }) => {
                 setShowUserLogin(true);
             }
             toast.error(error.message);
+            return false;
         }
     };
 

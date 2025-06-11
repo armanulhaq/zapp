@@ -8,7 +8,8 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
+    const { setShowUserLogin, setUser, axios, navigate, setCartItems } =
+        useAppContext();
 
     const onSubmitHandler = async (event) => {
         try {
@@ -21,6 +22,9 @@ const Login = () => {
             if (data.success) {
                 navigate("/");
                 setUser(data.user);
+                if (data.user.cartItems) {
+                    setCartItems(data.user.cartItems);
+                }
                 setShowUserLogin(false);
                 toast.success("Successfully logged in!");
             } else {

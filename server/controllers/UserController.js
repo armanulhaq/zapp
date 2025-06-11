@@ -94,8 +94,13 @@ export const login = async (req, res) => {
         });
         return res.json({
             success: true,
-            user: { email: user.email, name: user.name },
-            message: "User successfully created",
+            user: {
+                _id: user._id,
+                email: user.email,
+                name: user.name,
+                cartItems: user.cartItems,
+            },
+            message: "User successfully logged in",
         }); //Creates secure cookie with token and sends back success message
     } catch (error) {
         console.log(error.message);

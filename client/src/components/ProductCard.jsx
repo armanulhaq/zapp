@@ -3,7 +3,7 @@ import { useAppContext } from "../context/AppContext";
 import { useCallback } from "react";
 
 export const ProductCard = ({ product }) => {
-    const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
+    const { addToCart, cartItems, navigate } = useAppContext();
 
     // Get consistent rating and review count
     const getConsistentRandom = (id, min, max) => {
@@ -28,17 +28,6 @@ export const ProductCard = ({ product }) => {
             }
         },
         [addToCart, product._id]
-    );
-
-    const handleRemoveFromCart = useCallback(
-        (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            if (removeFromCart && product._id) {
-                removeFromCart(product._id);
-            }
-        },
-        [removeFromCart, product._id]
     );
 
     const handleCardClick = useCallback(() => {
@@ -120,55 +109,43 @@ export const ProductCard = ({ product }) => {
 
                     {/* Cart Button */}
                     <div className="text-primary">
-                        {currentCartQuantity === 0 ? (
-                            <button
-                                className="flex items-center justify-center gap-1 text-black bg-primary-faded border border-primary md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-primary/20 transition-all duration-200 active:scale-95"
-                                onClick={handleAddToCart}
-                                aria-label={`Add ${product.name} to cart`}
+                        <button
+                            className={`flex items-center justify-center gap-1 text-black ${
+                                currentCartQuantity > 0
+                                    ? "bg-red-100 text-red-400"
+                                    : "bg-primary-faded border border-primary"
+                            } md:w-[80px] w-[64px] h-[34px] rounded-lg font-medium cursor-pointer hover:bg-primary/20 transition-all duration-200 active:scale-95`}
+                            onClick={handleAddToCart}
+                            aria-label={`${
+                                currentCartQuantity > 0 ? "Remove" : "Add"
+                            } ${product.name} to cart`}
+                        >
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 14 14"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
                             >
-                                <svg
-                                    width="14"
-                                    height="14"
-                                    viewBox="0 0 14 14"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    aria-hidden="true"
-                                >
-                                    <path
-                                        d="M.583.583h2.333l1.564 7.81a1.17 1.17 0 0 0 1.166.94h5.67a1.17 1.17 0 0 0 1.167-.94l.933-4.893H3.5m2.333 8.75a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0m6.417 0a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0"
-                                        stroke="#000"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                                <span className="hidden md:inline">Add</span>
-                                <span className="md:hidden">+</span>
-                            </button>
-                        ) : (
-                            <div className="flex items-center justify-center gap-1 md:w-20 w-16 h-[34px] bg-primary rounded select-none">
-                                <button
-                                    onClick={handleRemoveFromCart}
-                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-l transition-all duration-200 active:scale-95 flex items-center justify-center"
-                                    aria-label={`Remove one ${product.name} from cart`}
-                                    disabled={currentCartQuantity <= 0}
-                                >
-                                    −
-                                </button>
-                                <span
-                                    className="flex-1 text-center text-black font-medium text-sm transition-all duration-200"
-                                    aria-label={`${currentCartQuantity} items in cart`}
-                                >
-                                    {currentCartQuantity}
-                                </span>
-                                <button
-                                    onClick={handleAddToCart}
-                                    className="cursor-pointer text-lg px-2 h-full text-black hover:bg-black/10 rounded-r transition-all duration-200 active:scale-95 flex items-center justify-center"
-                                    aria-label={`Add one more ${product.name} to cart`}
-                                >
-                                    +
-                                </button>
-                            </div>
-                        )}
+                                <path
+                                    d="M.583.583h2.333l1.564 7.81a1.17 1.17 0 0 0 1.166.94h5.67a1.17 1.17 0 0 0 1.167-.94l.933-4.893H3.5m2.333 8.75a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0m6.417 0a.583.583 0 1 1-1.167 0 .583.583 0 0 1 1.167 0"
+                                    stroke={
+                                        currentCartQuantity > 0
+                                            ? "#000"
+                                            : "#000"
+                                    }
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </svg>
+                            <span className="hidden md:inline">
+                                {currentCartQuantity > 0 ? "Remove" : "Add"}
+                            </span>
+                            <span className="md:hidden">
+                                {currentCartQuantity > 0 ? "×" : "+"}
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>

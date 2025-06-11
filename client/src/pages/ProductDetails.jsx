@@ -5,8 +5,7 @@ import { ProductCard } from "../components/ProductCard";
 import { assets } from "../assets/assets";
 
 const ProductDetails = () => {
-    const { products, navigate, addToCart, removeFromCart, cartItems } =
-        useAppContext();
+    const { products, navigate, addToCart, cartItems } = useAppContext();
     const { productID } = useParams();
 
     const getConsistentRandom = (id, min, max) => {
@@ -43,18 +42,15 @@ const ProductDetails = () => {
         }
     }, [addToCart, specificProduct]);
 
-    const handleRemoveFromCart = useCallback(() => {
+    const handleBuyNow = useCallback(async () => {
         if (specificProduct?._id) {
-            removeFromCart(specificProduct._id);
-        }
-    }, [removeFromCart, specificProduct]);
-
-    const handleBuyNow = useCallback(() => {
-        if (specificProduct?._id) {
-            addToCart(specificProduct._id);
+            // If item is not in cart, add it first
+            if (!cartItems[specificProduct._id]) {
+                await addToCart(specificProduct._id);
+            }
             navigate("/cart");
         }
-    }, [addToCart, navigate, specificProduct]);
+    }, [addToCart, navigate, specificProduct, cartItems]);
 
     if (!specificProduct) {
         return <div>Product not found</div>;
@@ -143,46 +139,19 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="flex gap-4 mt-10 w-full items-stretch">
-                        {/* Add to Cart or Quantity Controls */}
-                        <div className="relative w-full">
-                            {/* Add to Cart */}
-                            <button
-                                onClick={handleAddToCart}
-                                className={`absolute top-0 left-0 w-full h-full py-3.5 font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition-opacity duration-300 ${
-                                    currentCartQuantity > 0
-                                        ? "opacity-0 pointer-events-none"
-                                        : "opacity-100"
-                                }`}
-                            >
-                                Add to Cart
-                            </button>
-
-                            {/* Quantity Controls */}
-                            <div
-                                className={`absolute top-0 left-0 w-full h-full flex items-center justify-center gap-3 bg-primary-faded rounded-lg transition-opacity duration-300 ${
-                                    currentCartQuantity > 0
-                                        ? "opacity-100"
-                                        : "opacity-0 pointer-events-none"
-                                }`}
-                            >
-                                <button
-                                    onClick={handleRemoveFromCart}
-                                    className="text-xl px-3 text-black font-medium hover:bg-black/10 rounded-l transition-all duration-200 active:scale-95"
-                                    disabled={currentCartQuantity <= 0}
-                                >
-                                    -
-                                </button>
-                                <span className="px-4 text-black font-medium text-lg">
-                                    {currentCartQuantity}
-                                </span>
-                                <button
-                                    onClick={handleAddToCart}
-                                    className="text-xl px-3 text-black font-medium hover:bg-black/10 rounded-r transition-all duration-200 active:scale-95"
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
+                        {/* Add to Cart Button */}
+                        <button
+                            onClick={handleAddToCart}
+                            className={`w-full py-3.5 font-medium rounded-lg transition-all duration-200 ${
+                                currentCartQuantity > 0
+                                    ? "bg-primary-faded text-gray-800"
+                                    : "bg-gray-100 text-gray-800/80 hover:bg-gray-200"
+                            }`}
+                        >
+                            {currentCartQuantity > 0
+                                ? "Remove from Cart"
+                                : "Add to Cart"}
+                        </button>
 
                         {/* Buy Now */}
                         <button
