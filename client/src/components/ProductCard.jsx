@@ -1,5 +1,6 @@
 import { assets } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
+import { useCallback } from "react";
 
 export const ProductCard = ({ product }) => {
     const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
@@ -16,46 +17,41 @@ export const ProductCard = ({ product }) => {
     // Get current cart quantity
     const currentCartQuantity = cartItems?.[product._id] || 0;
 
-    // Early return if no product
-    if (!product || !product._id) return null;
-
-    // Cart handlers
-    const handleAddToCart = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        try {
+    // Cart handlers with debouncing
+    //using useCallback prevents function from being recreated on every render
+    const handleAddToCart = useCallback(
+        (e) => {
+            e.stopPropagation();
+            e.preventDefault();
             if (addToCart && product._id) {
                 addToCart(product._id);
             }
-        } catch (error) {
-            console.error("Error adding to cart:", error);
-        }
-    };
+        },
+        [addToCart, product._id]
+    );
 
-    const handleRemoveFromCart = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        try {
+    const handleRemoveFromCart = useCallback(
+        (e) => {
+            e.stopPropagation();
+            e.preventDefault();
             if (removeFromCart && product._id) {
                 removeFromCart(product._id);
             }
-        } catch (error) {
-            console.error("Error removing from cart:", error);
-        }
-    };
+        },
+        [removeFromCart, product._id]
+    );
 
-    const handleCardClick = () => {
-        try {
-            if (navigate && product.category && product._id) {
-                navigate(
-                    `/products/${product.category.toLowerCase()}/${product._id}`
-                );
-                window.scrollTo(0, 0);
-            }
-        } catch (error) {
-            console.error("Error navigating to product:", error);
+    const handleCardClick = useCallback(() => {
+        if (navigate && product.category && product._id) {
+            navigate(
+                `/products/${product.category.toLowerCase()}/${product._id}`
+            );
+            window.scrollTo(0, 0);
         }
-    };
+    }, [navigate, product.category, product._id]);
+
+    // Early return if no product
+    if (!product || !product._id) return null;
 
     return (
         <div

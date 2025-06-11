@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppContext } from "../context/AppContext";
 import { Link, useParams } from "react-router-dom";
 import { ProductCard } from "../components/ProductCard";
@@ -29,7 +29,7 @@ const ProductDetails = () => {
             );
             setRelatedProducts(related.slice(0, 5));
         }
-    }, [products]);
+    }, [products, specificProduct]);
 
     useEffect(() => {
         if (specificProduct?.image?.[0]) {
@@ -37,12 +37,32 @@ const ProductDetails = () => {
         }
     }, [specificProduct]);
 
+    const handleAddToCart = useCallback(() => {
+        if (specificProduct?._id) {
+            addToCart(specificProduct._id);
+        }
+    }, [addToCart, specificProduct]);
+
+    const handleRemoveFromCart = useCallback(() => {
+        if (specificProduct?._id) {
+            removeFromCart(specificProduct._id);
+        }
+    }, [removeFromCart, specificProduct]);
+
+    const handleBuyNow = useCallback(() => {
+        if (specificProduct?._id) {
+            addToCart(specificProduct._id);
+            navigate("/cart");
+        }
+    }, [addToCart, navigate, specificProduct]);
+
     if (!specificProduct) {
         return <div>Product not found</div>;
     }
 
     const rating = getConsistentRandom(specificProduct._id, 3, 5);
     const reviewCount = getConsistentRandom(specificProduct._id, 10, 1000);
+    const currentCartQuantity = cartItems[specificProduct._id] || 0;
 
     return (
         <div className="mt-12">
@@ -127,9 +147,9 @@ const ProductDetails = () => {
                         <div className="relative w-full">
                             {/* Add to Cart */}
                             <button
-                                onClick={() => addToCart(specificProduct._id)}
+                                onClick={handleAddToCart}
                                 className={`absolute top-0 left-0 w-full h-full py-3.5 font-medium bg-gray-100 text-gray-800/80 rounded-lg hover:bg-gray-200 transition-opacity duration-300 ${
-                                    cartItems[specificProduct._id]
+                                    currentCartQuantity > 0
                                         ? "opacity-0 pointer-events-none"
                                         : "opacity-100"
                                 }`}
@@ -140,27 +160,24 @@ const ProductDetails = () => {
                             {/* Quantity Controls */}
                             <div
                                 className={`absolute top-0 left-0 w-full h-full flex items-center justify-center gap-3 bg-primary-faded rounded-lg transition-opacity duration-300 ${
-                                    cartItems[specificProduct._id]
+                                    currentCartQuantity > 0
                                         ? "opacity-100"
                                         : "opacity-0 pointer-events-none"
                                 }`}
                             >
                                 <button
-                                    onClick={() =>
-                                        removeFromCart(specificProduct._id)
-                                    }
-                                    className="text-xl px-3 text-black font-medium"
+                                    onClick={handleRemoveFromCart}
+                                    className="text-xl px-3 text-black font-medium hover:bg-black/10 rounded-l transition-all duration-200 active:scale-95"
+                                    disabled={currentCartQuantity <= 0}
                                 >
                                     -
                                 </button>
                                 <span className="px-4 text-black font-medium text-lg">
-                                    {cartItems[specificProduct._id] || 0}
+                                    {currentCartQuantity}
                                 </span>
                                 <button
-                                    onClick={() =>
-                                        addToCart(specificProduct._id)
-                                    }
-                                    className="text-xl px-3 text-black font-medium"
+                                    onClick={handleAddToCart}
+                                    className="text-xl px-3 text-black font-medium hover:bg-black/10 rounded-r transition-all duration-200 active:scale-95"
                                 >
                                     +
                                 </button>
@@ -169,10 +186,7 @@ const ProductDetails = () => {
 
                         {/* Buy Now */}
                         <button
-                            onClick={() => {
-                                addToCart(specificProduct._id);
-                                navigate("/cart");
-                            }}
+                            onClick={handleBuyNow}
                             className="w-full py-3.5 font-medium rounded-lg bg-primary hover:bg-primary-faded transition"
                         >
                             Buy now
