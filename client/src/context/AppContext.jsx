@@ -172,11 +172,9 @@ export const AppContextProvider = ({ children }) => {
             }
             let cartData = structuredClone(cartItems);
 
+            // Completely remove the item from cart
             if (cartData[itemId]) {
-                cartData[itemId] -= 1;
-                if (cartData[itemId] === 0) {
-                    delete cartData[itemId];
-                }
+                delete cartData[itemId];
             }
 
             // Update cart in backend first
